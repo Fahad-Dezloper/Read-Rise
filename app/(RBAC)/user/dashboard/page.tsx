@@ -1,10 +1,11 @@
-import { UserDashboard } from '@/components/user-dashboard'
+
+import { UserDashboardMain } from '@/components/user-dashboard'
 import React from 'react'
 
 const page = () => {
   return (
       <div>
-          <UserDashboard />
+          <UserDashboardMain />
     </div>
   )
 }

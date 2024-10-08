@@ -12,7 +12,7 @@ const session = await getServerSession(authOptions);
         Home
       </Link>
     <Link className="text-gray-800 hover:text-sky-400 transition-colors" href={session?.user.role == "user" ? '/user/dashboard' : '/admin/dashboard'}>
-              {session?.user.role == "user" ? 'User Dashboard' : 'Admin Dashboard'}
+        {session?.user.role == "user" ? 'Dashboard' : 'Dashboard'}
     </Link>
       <SigninButton />
     </header>
