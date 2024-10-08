@@ -1,11 +1,15 @@
 
 import { UserDashboardMain } from '@/components/user-dashboard'
 import React from 'react'
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-const page = () => {
+const page = async () => {
+  const session = await getServerSession(authOptions);
+  const userEmail = session?.user.email; 
   return (
       <div>
-          <UserDashboardMain />
+          <UserDashboardMain email = {userEmail} />
     </div>
   )
 }

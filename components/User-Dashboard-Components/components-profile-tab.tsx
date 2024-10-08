@@ -2,21 +2,41 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {useRouter} from 'next/navigation'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import axios from 'axios';
+import { useState } from 'react';
 
 interface ProfileTabProps {
   user: {
     name: string;
     email: string;
-    memberId: string;
-    phoneNumber: string;
-    avatar: string;
+    memberId?: string;
+    phoneNumber?: string;
+    avatar?: string;
   };
 }
 
 export function ProfileTab({ user }: ProfileTabProps) {
+  const router = useRouter(); // Initialize the router
+  const [name, setName] = useState(user?.name || '')
+
+  const handleSaveChanges = async () => {
+    try {
+      const response = await axios.put('/queries/user', {
+        email: user.email,
+        name,
+      });
+      console.log("User Updates", response.data);
+      setName(response.data.name);
+      router.refresh(); 
+      } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -25,17 +45,18 @@ export function ProfileTab({ user }: ProfileTabProps) {
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-4 mb-4">
           <Avatar className="h-20 w-20">
-            <AvatarImage src={user?.avatar || '/placeholder.svg?height=100&width=100'} alt={user?.name || 'User'} />
-            <AvatarFallback>{user?.name ? user.name.split(' ').map(n => n[0]).join('') : 'U'}</AvatarFallback>
+            <AvatarImage src={user?.avatar || '/placeholder.svg?height=100&width=100'} alt={ name || 'User'} />
+            <AvatarFallback>{name ? name.split(' ').map(n => n[0]).join('') : 'U'}</AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-xl font-semibold">{user?.name || 'User'}</h2>
+            <h2 className="text-xl font-semibold">{name || 'User'}</h2>
             <p className="text-gray-500">{user?.email || 'No email provided'}</p>
           </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
-          <Input id="name" defaultValue={user?.name || ''} />
+          <Input id="name" value={name} 
+  onChange={(e) => setName(e.target.value)} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -49,7 +70,7 @@ export function ProfileTab({ user }: ProfileTabProps) {
           <Label htmlFor="phoneNumber">Phone Number</Label>
           <Input id="phoneNumber" defaultValue={user?.phoneNumber || ''} />
         </div>
-        <Button>Save Changes</Button>
+        <Button onClick={handleSaveChanges}>Save Changes</Button>
       </CardContent>
     </Card>
   )

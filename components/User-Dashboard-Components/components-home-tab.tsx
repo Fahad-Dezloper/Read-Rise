@@ -11,14 +11,14 @@ interface HomeTabProps {
   user: {
     name: string;
     email: string;
-    memberId: string;
-    avatar: string;
+    memberId?: string;
+    avatar?: string;
   };
-  activeSubscription: {
+  activeSubscription?: {
     name: string;
     validity: string;
   };
-  lentBooks: Array<{
+  lentBooks?: Array<{
     id: number;
     name: string;
     image: string;

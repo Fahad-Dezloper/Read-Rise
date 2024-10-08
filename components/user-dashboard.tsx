@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { MenuIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
@@ -9,18 +9,39 @@ import { HomeTab } from "@/components/User-Dashboard-Components/components-home-
 import { ProfileTab } from "@/components/User-Dashboard-Components/components-profile-tab"
 import { BooksTab } from "@/components/User-Dashboard-Components/components-books-tab"
 import { SubscriptionsTab } from "@/components/User-Dashboard-Components/components-subscriptions-tab"
+import axios from "axios"
 
-export function UserDashboardMain() {
+interface User {
+  id: string;
+  name: string;
+    email: string;
+    role: string;
+}
+
+interface UserComponentProps {
+  email: string; // Pass the logged-in user's email as a prop
+}
+
+export function UserDashboardMain({email}:UserComponentProps) {
   const [activeTab, setActiveTab] = useState("home")
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const user = {
-    name: "Alice Johnson",
-    email: "alice@example.com",
-    memberId: "MEM12345",
-    phoneNumber: "+1 (555) 123-4567",
-    avatar: "/placeholder.svg?height=100&width=100",
-  }
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`/queries/user?email=${email}`);
+        setUser(response.data);
+      } catch (err) {
+        setError('Error fetching user data', err);
+      }
+    };
+
+    fetchUser();
+  }, [email]);
+
+  if (error) return <div>{error}</div>;
 
   const lentBooks = [
     { id: 1, name: "The Great Gatsby", isbn: "9780743273565", image: "/placeholder.svg?height=80&width=60", returnDate: "2023-07-15", issueDate: "2023-06-15", author: "F. Scott Fitzgerald" },
@@ -65,10 +86,11 @@ export function UserDashboardMain() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsContent value="home">
-            <HomeTab user={user} activeSubscription={activeSubscription} lentBooks={lentBooks} onTabChange={handleTabChange} />
+            {user ? <HomeTab user={user} activeSubscription={activeSubscription} lentBooks={lentBooks} onTabChange={handleTabChange} /> : "loading user is arriving"}
           </TabsContent>
           <TabsContent value="profile">
-            <ProfileTab user={user} />
+            {user? <ProfileTab user={user} /> : "loading user is arriving"}
+            {/* <ProfileTab user={user} /> */}
           </TabsContent>
           <TabsContent value="books">
             <BooksTab lentBooks={lentBooks} boughtBooks={boughtBooks} />
