@@ -8,29 +8,24 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import axios from 'axios';
 import { useState } from 'react';
+import { useUser } from '@/app/UserContext';
+import { User } from '@/shared/usertypes'
 
-interface ProfileTabProps {
-  user: {
-    name: string;
-    email: string;
-    memberId?: string;
-    phoneNumber?: string;
-    avatar?: string;
-  };
-}
-
-export function ProfileTab({ user }: ProfileTabProps) {
+export function ProfileTab() {
   const router = useRouter(); // Initialize the router
-  const [name, setName] = useState(user?.name || '')
+  const { user, setUser } = useUser();
+  const [name, setName] = useState<string>(user?.name || '')
+  const [phoneNumber, setphoneNumber] = useState<string>(user?.phoneNumber || '')
 
   const handleSaveChanges = async () => {
     try {
       const response = await axios.put('/queries/user', {
         email: user.email,
         name,
+        phoneNumber
       });
       console.log("User Updates", response.data);
-      setName(response.data.name);
+      setUser({ ...user, name: response.data.name, phoneNumber: response.data.phoneNumber });
       router.refresh(); 
       } catch (error) {
       console.error('Error updating user:', error);
@@ -68,7 +63,7 @@ export function ProfileTab({ user }: ProfileTabProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="phoneNumber">Phone Number</Label>
-          <Input id="phoneNumber" defaultValue={user?.phoneNumber || ''} />
+          <Input id="phoneNumber" onChange={(e) => setphoneNumber(e.target.value)} defaultValue={phoneNumber || ''} />
         </div>
         <Button onClick={handleSaveChanges}>Save Changes</Button>
       </CardContent>

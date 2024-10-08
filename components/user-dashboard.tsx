@@ -10,6 +10,7 @@ import { ProfileTab } from "@/components/User-Dashboard-Components/components-pr
 import { BooksTab } from "@/components/User-Dashboard-Components/components-books-tab"
 import { SubscriptionsTab } from "@/components/User-Dashboard-Components/components-subscriptions-tab"
 import axios from "axios"
+import { useUser } from '@/app/UserContext';
 
 interface User {
   id: string;
@@ -22,10 +23,10 @@ interface UserComponentProps {
   email: string; // Pass the logged-in user's email as a prop
 }
 
-export function UserDashboardMain({email}:UserComponentProps) {
+export function UserDashboardMain({ email }: UserComponentProps) {
   const [activeTab, setActiveTab] = useState("home")
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [user, setUser] = useState<User | null>(null);
+  const { setUser } = useUser(); // Get setUser from context
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export function UserDashboardMain({email}:UserComponentProps) {
     };
 
     fetchUser();
-  }, [email]);
+  }, [email, setUser]);
 
   if (error) return <div>{error}</div>;
 
@@ -86,10 +87,10 @@ export function UserDashboardMain({email}:UserComponentProps) {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsContent value="home">
-            {user ? <HomeTab user={user} activeSubscription={activeSubscription} lentBooks={lentBooks} onTabChange={handleTabChange} /> : "loading user is arriving"}
+            <HomeTab activeSubscription={activeSubscription} lentBooks={lentBooks} onTabChange={handleTabChange} />
           </TabsContent>
           <TabsContent value="profile">
-            {user? <ProfileTab user={user} /> : "loading user is arriving"}
+          <ProfileTab />
             {/* <ProfileTab user={user} /> */}
           </TabsContent>
           <TabsContent value="books">
