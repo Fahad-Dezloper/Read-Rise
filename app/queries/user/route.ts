@@ -4,6 +4,8 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+
+// GET USER
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const email = searchParams.get('email');
@@ -23,8 +25,10 @@ export async function GET(req: Request) {
   return NextResponse.json(user);
 }
 
+
+// UPDATE USER
 export async function PUT(req: Request) {
-  const { email, name } = await req.json();
+  const { email, name, phoneNumber } = await req.json();
 
   if (!email) {
     return NextResponse.json({ error: 'Email is required' }, { status: 400 })
@@ -34,7 +38,7 @@ export async function PUT(req: Request) {
     where: { email },
     data: {
       name,
-      // phoneNumber,
+      phoneNumber,
     },
   });
 
