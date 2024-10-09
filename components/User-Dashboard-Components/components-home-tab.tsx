@@ -9,16 +9,6 @@ import { Button } from "@/components/ui/button"
 import {useUser} from "@/app/UserContext"
 
 interface HomeTabProps {
-  user: {
-    name: string;
-    email: string;
-    memberId?: string;
-    avatar?: string;
-  };
-  activeSubscription?: {
-    name: string;
-    validity: string;
-  };
   lentBooks?: Array<{
     id: number;
     name: string;
@@ -28,13 +18,30 @@ interface HomeTabProps {
   onTabChange: (tab: string) => void;
 }
 
-export function HomeTab({ activeSubscription, lentBooks, onTabChange }: HomeTabProps) {
-  const {user} = useUser();
+interface User{
+    name: string;
+    email: string;
+    memberID?: string;
+    avatar?: string;
+    subscription: {
+      planType: string;
+      status: string;
+      startDate: Date;
+      endDate: Date;
+    };
+  };
+
+export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
+  const { user }: User = useUser();
+  if (!user) {
+    return <p>Loading user details...</p>;
+  }
+  console.log("i am user", user)
   return (
     <Card>
       <CardHeader>
         <CardTitle>Welcome, {user?.name || 'User'}!</CardTitle>
-        <CardDescription>Here's an overview of your account</CardDescription>
+        <CardDescription>Here&apos;s an overview of your account</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center space-x-4 mb-6">
@@ -45,7 +52,7 @@ export function HomeTab({ activeSubscription, lentBooks, onTabChange }: HomeTabP
           <div>
             <h2 className="text-2xl font-semibold">{user?.name || 'User'}</h2>
             <p className="text-gray-500">{user?.email || 'No email provided'}</p>
-            <p className="text-gray-500">Member ID: {user?.memberId || 'N/A'}</p>
+            <p className="text-gray-500">Member ID: {user?.memberID || 'N/A'}</p>
           </div>
         </div>
 
@@ -55,10 +62,10 @@ export function HomeTab({ activeSubscription, lentBooks, onTabChange }: HomeTabP
             <Card>
               <CardContent className="flex justify-between items-center p-4">
                 <div>
-                  <p className="font-medium">{activeSubscription?.name || 'No active subscription'}</p>
-                  <p className="text-sm text-gray-500">Valid until: {activeSubscription?.validity || 'N/A'}</p>
+                  <p className="font-semibold">{user.subscription?.planType}</p>
+                  <p className="text-sm text-gray-500">Valid until: {new Date(user.subscription?.endDate).toLocaleDateString()}</p>
                 </div>
-                <Badge variant="secondary">Active</Badge>
+                <Badge variant="secondary">{user.subscription?.status}</Badge>
               </CardContent>
             </Card>
           </div>

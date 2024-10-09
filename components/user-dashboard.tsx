@@ -16,11 +16,19 @@ interface User {
   id: string;
   name: string;
     email: string;
-    role: string;
+  role: string;
+  subscription?: Subscription;
 }
 
 interface UserComponentProps {
-  email: string; // Pass the logged-in user's email as a prop
+  email: string;
+}
+
+interface Subscription {
+  planType: string;
+  status: string;
+  startDate: Date;
+  endDate: Date;
 }
 
 export function UserDashboardMain({ email }: UserComponentProps) {
@@ -32,13 +40,21 @@ export function UserDashboardMain({ email }: UserComponentProps) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`/queries/user?email=${email}`);
-        setUser(response.data);
-      } catch (err) {
-        setError('Error fetching user data', err);
-      }
-    };
+        const userResponse = await axios.get(`/queries/user?email=${email}`);
+        const subscriptionResponse  = await axios.get(`/queries/subscription?email=${email}`);
+          const userData: User = {
+            ...userResponse.data,
+            subscription: subscriptionResponse.data.subscription || null, 
+          };
 
+          setUser(userData);
+          console.log("user with subscription", userData);
+        } catch (err) {
+          setError('Error fetching user data');
+          console.error(err);
+        }
+    };
+    
     fetchUser();
   }, [email, setUser]);
 
@@ -87,7 +103,7 @@ export function UserDashboardMain({ email }: UserComponentProps) {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsContent value="home">
-            <HomeTab activeSubscription={activeSubscription} lentBooks={lentBooks} onTabChange={handleTabChange} />
+            <HomeTab lentBooks={lentBooks} onTabChange={handleTabChange} />
           </TabsContent>
           <TabsContent value="profile">
           <ProfileTab />

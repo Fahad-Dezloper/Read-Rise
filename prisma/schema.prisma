@@ -14,7 +14,9 @@ model User {
   emailVerified DateTime?
   image         String?
   role          String?
-  phoneNumber   String? 
+  memberID      String?         @unique
+  phoneNumber   String?
+  subscription  Subscription? 
   accounts      Account[]
   sessions      Session[]
   // Optional for WebAuthn support
@@ -23,6 +25,32 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Subscription {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String          @unique @db.ObjectId
+  planType    PlanType        @default(NONE) // Enum for subscription type
+  status      SubscriptionStatus @default(NO_SUBSCRIPTION) // Enum for subscription status
+  startDate   DateTime        @default(now())
+  endDate     DateTime?
+  user        User            @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime        @default(now())
+}
+
+enum PlanType {
+  NONE
+  BASIC
+  ADVANCE
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  NO_SUBSCRIPTION
+  ACTIVE
+  INACTIVE
+}
+
  
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId

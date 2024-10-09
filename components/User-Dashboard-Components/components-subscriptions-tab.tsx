@@ -5,12 +5,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useUser } from "@/app/UserContext"
+import { Subscription } from "@prisma/client"
 
-interface Subscription {
-  id: number;
-  name: string;
-  price?: string;
-  validity?: string;
+interface user {
+  subscription: {
+    planType: string;
+    status: string;
+    startDate: Date;
+    endDate: Date;
+  }
 }
 
 interface SubscriptionsTabProps {
@@ -19,6 +23,11 @@ interface SubscriptionsTabProps {
 }
 
 export function SubscriptionsTab({ activeSubscription, availableSubscriptions }: SubscriptionsTabProps) {
+  const { user } = useUser();
+  if (!user) {
+    return <p>Loading user details...</p>;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -32,10 +41,10 @@ export function SubscriptionsTab({ activeSubscription, availableSubscriptions }:
             <Card>
               <CardContent className="flex justify-between items-center p-4">
                 <div>
-                  <p className="font-medium">{activeSubscription?.name || 'No active subscription'}</p>
-                  <p className="text-sm text-gray-500">Valid until: {activeSubscription?.validity || 'N/A'}</p>
+                  <p className="font-medium">{user.subscription?.planType || 'No active subscription'}</p>
+                  <p className="text-sm text-gray-500">Valid until: {new Date(user.subscription?.endDate).toLocaleDateString() || 'N/A'}</p>
                 </div>
-                <Badge variant="secondary">Active</Badge>
+                <Badge variant="secondary">{user.subscription?.status}</Badge>
               </CardContent>
             </Card>
           </div>

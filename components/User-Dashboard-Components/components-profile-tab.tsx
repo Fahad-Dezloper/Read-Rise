@@ -20,7 +20,8 @@ export function ProfileTab() {
   const handleSaveChanges = async () => {
     try {
       const response = await axios.put('/queries/user', {
-        email: user.email,
+        email: user?.email,
+        memberID: user?.memberID,
         name,
         phoneNumber
       });
@@ -59,7 +60,7 @@ export function ProfileTab() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="memberId">Member ID</Label>
-          <Input id="memberId" defaultValue={user?.memberId || ''} disabled />
+          <Input id="memberId" defaultValue={user?.memberID || ''} disabled />
         </div>
         <div className="space-y-2">
           <Label htmlFor="phoneNumber">Phone Number</Label>
