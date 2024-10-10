@@ -10,10 +10,12 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useUser } from '@/app/UserContext';
 import { User } from '@/shared/usertypes'
+import { useAdmin } from '@/app/AdminContext'
 
 export function ProfileTab() {
   const router = useRouter(); // Initialize the router
   const { user, setUser } = useUser();
+  const { adminSetUsers } = useAdmin();
   const [name, setName] = useState<string>(user?.name || '')
   const [phoneNumber, setphoneNumber] = useState<string>(user?.phoneNumber || '')
 
@@ -27,6 +29,14 @@ export function ProfileTab() {
       });
       console.log("User Updates", response.data);
       setUser({ ...user, name: response.data.name, phoneNumber: response.data.phoneNumber });
+
+      if (adminSetUsers) {
+        adminSetUsers((prevUsers) => {
+          prevUser.map((adminUser) => 
+            adminUser.email === user?.email? {...adminUser, name:response.data.name, phoneNumber:response.data.phoneNumber } : adminUser
+          )
+        })
+      }
       router.refresh(); 
       } catch (error) {
       console.error('Error updating user:', error);

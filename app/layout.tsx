@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "./components/Providers";
 import Appbar from "./components/Appbar";
 import { UserProvider } from "./UserContext";
+import { AdminProvider } from "./AdminContext";
 
 
 const geistSans = localFont({
@@ -33,10 +34,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
+          <AdminProvider>
         <Providers>
         <Appbar />
         {children}
-          </Providers>
+            </Providers>
+            </AdminProvider>
           </UserProvider>
       </body>
     </html>

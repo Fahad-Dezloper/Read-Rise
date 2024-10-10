@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Search, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,12 +10,30 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { useAdmin } from '@/app/AdminContext'; // Import the custom hook
+import { AdminUser } from '@/shared/usertypes'; // Import your types
+import axios from "axios"
 
 export function UsersTabComponent() {
   const [searchQuery, setSearchQuery] = useState("")
   const [userFilter, setUserFilter] = useState("all")
   const [planFilter, setPlanFilter] = useState("all")
   const [selectedUser, setSelectedUser] = useState(null)
+
+   const { adminUser, setAdminUser } = useAdmin();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('/queries/admin'); // Adjust this endpoint as needed
+        console.log(response);
+        setAdminUser(response.data); // Assuming response.data is an array of users
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchUsers();
+  }, [setAdminUser]);
 
   // Mock data for users
   const users = [
@@ -109,13 +127,13 @@ export function UsersTabComponent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.map((user) => (
+              {adminUser ? adminUser.map((user: AdminUser) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell className="md:table-cell hidden">{user.email}</TableCell>
-                  <TableCell className="md:table-cell hidden">{user.phone}</TableCell>
+                  <TableCell className="md:table-cell hidden">{user.phoneNumber ? user.phoneNumber : "No Contact"}</TableCell>
                   <TableCell>{user.memberID}</TableCell>
-                  <TableCell className="md:table-cell hidden">{user.plan}</TableCell>
+                  <TableCell className="md:table-cell hidden">{user.subscription.planType}</TableCell>
                   <TableCell>
                     <Dialog>
                       <DialogTrigger asChild>
@@ -131,7 +149,7 @@ export function UsersTabComponent() {
                           <div className="space-y-4">
                             <p><strong>Name:</strong> {selectedUser.name}</p>
                             <p><strong>Email:</strong> {selectedUser.email}</p>
-                            <p><strong>Phone:</strong> {selectedUser.phone}</p>
+                            <p><strong>Phone:</strong> {selectedUser.phoneNumber ? selectedUser.phoneNumber : "No Contact"}</p>
                             <p><strong>Member ID:</strong> {selectedUser.memberID}</p>
                             <div className="flex items-center space-x-2">
                               <strong>Subscription Plan:</strong>
@@ -149,7 +167,7 @@ export function UsersTabComponent() {
                                 </SelectContent>
                               </Select>
                             </div>
-                            <p><strong>Books Lent:</strong> {selectedUser.booksLent}</p>
+                            <p><strong>Books Lent:</strong> {selectedUser.booksLent ? selectedUser.booksLent : "No Books Lent yet"}</p>
                             <div className="flex justify-between">
                               <Button onClick={() => handleUpdateUser(selectedUser.id, selectedUser.plan)}>
                                 Save Details
@@ -182,7 +200,9 @@ export function UsersTabComponent() {
                     </Dialog>
                   </TableCell>
                 </TableRow>
-              ))}
+              )): (
+                  <div>Your data is loading</div>
+              )}
             </TableBody>
           </Table>
         </div>
