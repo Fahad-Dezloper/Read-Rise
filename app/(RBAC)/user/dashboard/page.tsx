@@ -1,5 +1,4 @@
-
-import { UserDashboardMain } from '@/components/user-dashboard'
+import { UserDashboardMain } from '@/components/Main-Dashboards/user-dashboard';
 import React from 'react'
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';

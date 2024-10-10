@@ -2,7 +2,6 @@
 "use client"
 import React, { createContext, useContext, useState } from 'react';
 
-// Define the shape of the user data
 interface User {
   name: string;
   email: string;
@@ -16,11 +15,11 @@ interface Subscription {
   userId: string;
   planType: string;
   status: string;
-  startDate: string; // You might want to use Date type depending on your needs
+  startDate: string;
   endDate: string;
 }
 
-// Create the context
+// context
 const UserContext = createContext<{
   user: User | null;
   subscription: Subscription | null;
@@ -28,7 +27,7 @@ const UserContext = createContext<{
    setSubscription: React.Dispatch<React.SetStateAction<Subscription | null>>;
 } | null>(null);
 
-// Create the provider component
+// provider component
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
