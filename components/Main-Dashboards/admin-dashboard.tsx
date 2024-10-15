@@ -8,6 +8,7 @@ import { SidebarComponent } from "../Admin-Dashboard-Compoenents/sidebar"
 import { UsersTabComponent } from "../Admin-Dashboard-Compoenents/users-tab"
 import { SaleTabComponent } from "../Admin-Dashboard-Compoenents/sale-tab"
 import { SoldBooksTabComponent } from "../Admin-Dashboard-Compoenents/sold-books-tab"
+import { AddBooksTabComponent } from "../Admin-Dashboard-Compoenents/add-books-tab"
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("users")
@@ -34,6 +35,7 @@ export function AdminDashboard() {
         {activeTab === "users" && <UsersTabComponent />}
         {activeTab === "sale" && <SaleTabComponent />}
         {activeTab === "sold-books" && <SoldBooksTabComponent />}
+        {activeTab === "add-books" && <AddBooksTabComponent />}
       </div>
     </div>
   )

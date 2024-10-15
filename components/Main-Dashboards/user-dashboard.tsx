@@ -61,19 +61,19 @@ export function UserDashboardMain({ email }: UserComponentProps) {
   if (error) return <div>{error}</div>;
 
   const lentBooks = [
-    { id: 1, name: "The Great Gatsby", isbn: "9780743273565", image: "/placeholder.svg?height=80&width=60", returnDate: "2023-07-15", issueDate: "2023-06-15", author: "F. Scott Fitzgerald" },
-    { id: 2, name: "To Kill a Mockingbird", isbn: "9780446310789", image: "/placeholder.svg?height=80&width=60", returnDate: "2023-07-20", issueDate: "2023-06-20", author: "Harper Lee" },
-    { id: 3, name: "1984", isbn: "9780451524935", image: "/placeholder.svg?height=80&width=60", returnDate: "2023-07-25", issueDate: "2023-06-25", author: "George Orwell" },
-    { id: 4, name: "Pride and Prejudice", isbn: "9780141439518", image: "/placeholder.svg?height=80&width=60", returnDate: "2023-07-30", issueDate: "2023-06-30", author: "Jane Austen" },
-    { id: 5, name: "The Catcher in the Rye", isbn: "9780316769174", image: "/placeholder.svg?height=80&width=60", returnDate: "2023-08-05", issueDate: "2023-07-05", author: "J.D. Salinger" },
+    { id: 1, name: "The Great Gatsby", isbn: "9780743273565", image: "https://m.media-amazon.com/images/I/71ptoyWH8dL._AC_UF1000,1000_QL80_.jpg?height=80&width=60", returnDate: "2023-07-15", issueDate: "2023-06-15", author: "F. Scott Fitzgerald" },
+    { id: 2, name: "To Kill a Mockingbird", isbn: "9780446310789", image: "https://m.media-amazon.com/images/I/51+PolL6xgL._SY445_SX342_.jpg?height=80&width=60", returnDate: "2023-07-20", issueDate: "2023-06-20", author: "Harper Lee" },
+    { id: 3, name: "1984", isbn: "9780451524935", image: "https://m.media-amazon.com/images/I/41BkabfiHuL._SY445_SX342_.jpg?height=80&width=60", returnDate: "2023-07-25", issueDate: "2023-06-25", author: "George Orwell" },
+    { id: 4, name: "Pride and Prejudice", isbn: "9780141439518", image: "https://m.media-amazon.com/images/I/412bjj40hoL._SY445_SX342_.jpg?height=80&width=60", returnDate: "2023-07-30", issueDate: "2023-06-30", author: "Jane Austen" },
+    { id: 5, name: "The Catcher in the Rye", isbn: "9780316769174", image: "https://m.media-amazon.com/images/I/418bOQWiRBL._SY445_SX342_.jpg?height=80&width=60", returnDate: "2023-08-05", issueDate: "2023-07-05", author: "J.D. Salinger" },
   ]
 
   const boughtBooks = [
-    { id: 6, name: "The Hobbit", isbn: "9780547928227", image: "/placeholder.svg?height=80&width=60", boughtOn: "2023-05-01", author: "J.R.R. Tolkien" },
-    { id: 7, name: "Harry Potter and the Sorcerer's Stone", isbn: "9780590353427", image: "/placeholder.svg?height=80&width=60", boughtOn: "2023-05-15", author: "J.K. Rowling" },
-    { id: 8, name: "The Da Vinci Code", isbn: "9780307474278", image: "/placeholder.svg?height=80&width=60", boughtOn: "2023-05-30", author: "Dan Brown" },
-    { id: 9, name: "The Hunger Games", isbn: "9780439023528", image: "/placeholder.svg?height=80&width=60", boughtOn: "2023-06-10", author: "Suzanne Collins" },
-    { id: 10, name: "The Alchemist", isbn: "9780062315007", image: "/placeholder.svg?height=80&width=60", boughtOn: "2023-06-25", author: "Paulo Coelho" },
+    { id: 6, name: "The Hobbit", isbn: "9780547928227", image: "https://m.media-amazon.com/images/I/51lWLTxft+L._SY445_SX342_.jpg?height=80&width=60", boughtOn: "2023-05-01", author: "J.R.R. Tolkien" },
+    { id: 7, name: "Harry Potter and the Sorcerer's Stone", isbn: "9780590353427", image: "https://m.media-amazon.com/images/I/51dOacmuzvL._SY445_SX342_.jpg?height=80&width=60", boughtOn: "2023-05-15", author: "J.K. Rowling" },
+    { id: 8, name: "The Da Vinci Code", isbn: "9780307474278", image: "https://m.media-amazon.com/images/I/41Xh2DgrhvL._SY445_SX342_.jpg?height=80&width=60", boughtOn: "2023-05-30", author: "Dan Brown" },
+    { id: 9, name: "The Hunger Games", isbn: "9780439023528", image: "https://m.media-amazon.com/images/I/51n4GJK-TGS._SY445_SX342_.jpg?height=80&width=60", boughtOn: "2023-06-10", author: "Suzanne Collins" },
+    { id: 10, name: "The Alchemist", isbn: "9780062315007", image: "https://m.media-amazon.com/images/I/416JeZoF8tL._SY445_SX342_.jpg?height=80&width=60", boughtOn: "2023-06-25", author: "Paulo Coelho" },
   ]
 
   const activeSubscription = { id: 1, name: "Premium Plan", validity: "2023-12-31" }

@@ -1,6 +1,6 @@
 'use client'
 
-import { Users, BookOpen, DollarSign } from "lucide-react"
+import { Users, BookOpen, DollarSign, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function SidebarComponent({ className = "", setActiveTab }) {
@@ -39,6 +39,16 @@ export function SidebarComponent({ className = "", setActiveTab }) {
             >
               <DollarSign className="mr-2 h-4 w-4" />
               Sold Books
+            </Button>
+          </li>
+          <li>
+            <Button
+              variant="ghost"
+              className="w-full justify-start p-4"
+              onClick={() => setActiveTab("add-books")}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Books
             </Button>
           </li>
         </ul>
