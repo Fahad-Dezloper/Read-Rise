@@ -1,47 +1,47 @@
-"use client"
-import React, { useState } from 'react';
+"use client"; // Important: This line indicates that this component should be client-side rendered.
 
-const ImagePasteComponent = () => {
-  const [imageSrc, setImageSrc] = useState('');
+import React from "react";
+import { ImageKitProvider, IKUpload, IKImage } from "imagekitio-next";
 
-  const handlePaste = (event) => {
-    const items = event.clipboardData.items;
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (item.type.startsWith('image/')) {
-        const file = item.getAsFile();
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImageSrc(reader.result);
-        };
-        reader.readAsDataURL(file);
-      }
+const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
+const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
+
+const authenticator = async () => {
+  try {
+    const response = await fetch("http://localhost:3000/api/imageAuth");
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Request failed with status ${response.status}: ${errorText}`);
     }
-  };
 
-  return (
-    <div>
-      <h2>Paste an Image</h2>
-      <div
-        onPaste={handlePaste}
-        style={{
-          border: '2px dashed #ccc',
-          padding: '20px',
-          textAlign: 'center',
-          marginBottom: '20px',
-        }}
-      >
-        Paste your image here (Ctrl + V)
-      </div>
-      {imageSrc && (
-        <img
-          src={imageSrc}
-          alt="Pasted Image"
-          style={{ maxWidth: '100%', height: 'auto' }}
-        />
-      )}
-    </div>
-  );
+    const data = await response.json();
+    const { signature, expire, token } = data;
+    return { signature, expire, token };
+  } catch (error) {
+    throw new Error(`Authentication request failed: ${error.message}`);
+  }
 };
 
-export default ImagePasteComponent;
+const onError = (err) => {
+  console.log("Error", err);
+};
+
+const onSuccess = (res) => {
+  console.log("Success", res);
+  // You can also fetch the uploaded image here if you want to display it
+};
+
+export default function ImagePasteComponent() {
+  return (
+    <div className="App">
+      <h1>ImageKit Next.js Quick Start</h1>
+      <ImageKitProvider publicKey={publicKey} urlEndpoint={urlEndpoint} authenticator={authenticator}>
+        <div>
+          <h2>File Upload</h2>
+          <IKUpload fileName="test-upload.png" onError={onError} onSuccess={onSuccess} />
+        </div>
+      </ImageKitProvider>
+    </div>
+  );
+}

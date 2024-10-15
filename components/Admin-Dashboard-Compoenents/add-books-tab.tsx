@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import React from "react"
 import { X } from 'lucide-react'
-
+import axios from 'axios'
 export function AddBooksTabComponent() {
   const [isbn, setIsbn] = useState("")
   const [bookName, setBookName] = useState("")
@@ -24,16 +24,6 @@ export function AddBooksTabComponent() {
       setImages(prevImages => [...prevImages, ...Array.from(e.target.files as FileList)])
     }
   }
-
-  // Helper function to convert a File to a base64 string
-const convertToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
 
   const handlePaste = useCallback((e: ClipboardEvent) => {
     const items = e.clipboardData?.items
@@ -69,7 +59,6 @@ const convertToBase64 = (file: File): Promise<string> => {
   }, [handlePaste])
 
 
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log({ isbn, bookName, bookDescription, bookAuthor, bookQuantity, images })
@@ -80,25 +69,20 @@ const convertToBase64 = (file: File): Promise<string> => {
     setQuantity("")
     setBookDescription("")
     setImages([])
-        if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity || !images) {
+        if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity) {
       alert("All fields are required.");
       return;
     }
 
     try {
-      console.log("Sending data:", { isbn, bookName, bookDescription, bookAuthor, bookQuantity, images});
-
-       const base64Images = await Promise.all(
-      images.map(async (image) => await convertToBase64(image))
-       );
-      
+      console.log("Sending data:", { isbn, bookName, bookDescription, bookAuthor, bookQuantity});
         const data = {
       isbn,
       bookName,
       bookDescription,
       bookAuthor,
       bookQuantity,
-      images: base64Images, // Include base64 images
+      // images, 
         };
       
       const response = await fetch('/api/books', {
