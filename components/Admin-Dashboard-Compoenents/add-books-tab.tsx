@@ -77,7 +77,8 @@ export function AddBooksTabComponent() {
       console.log(aiAnswer)
       setBookDescription(aiAnswer.reply);
       if (response.ok) {
-      alert(aiAnswer?.reply);
+        setBookDescription(aiAnswer.reply);
+      // alert(aiAnswer?.reply);
     } else {
       alert(`Error: ${aiAnswer?.error}`);
     }
