@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && next dev",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && next build",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.6.0",
+    "@google/generative-ai": "^0.21.0",
     "@prisma/client": "^5.20.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -24,6 +25,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "google-auth-library": "^9.14.2",
     "googleapis": "^144.0.0",
     "imagekitio-next": "^1.0.0",
     "lucide-react": "^0.447.0",

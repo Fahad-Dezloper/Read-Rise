@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import React from "react"
-import { X } from 'lucide-react'
+import { Loader2, Loader2Icon, X } from 'lucide-react'
 import axios from 'axios'
 export function AddBooksTabComponent() {
   const [isbn, setIsbn] = useState("")
@@ -17,6 +17,7 @@ export function AddBooksTabComponent() {
   const [bookDescription, setBookDescription] = useState("")
   const [bookQuantity, setQuantity] = useState("")
   const [images, setImages] = useState<File[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,58 +59,70 @@ export function AddBooksTabComponent() {
     }
   }, [handlePaste])
 
+  const generateDiscription = async () => {
+    setIsSubmitting(true)
+
+    try {
+      const prompt = `Generate a summary of the book 
+      ISBN: ${isbn}, 
+      Book Name: ${bookName}, 
+      Author: ${bookAuthor}.`;
+      
+      const response = await fetch(`/api/gemini`, {
+        method: 'POST',
+        body: JSON.stringify({ prompt }),
+      })
+
+      const aiAnswer = await response.json();
+      console.log(aiAnswer)
+      setBookDescription(aiAnswer.reply);
+      if (response.ok) {
+      alert(aiAnswer?.reply);
+    } else {
+      alert(`Error: ${aiAnswer?.error}`);
+    }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    console.log({ isbn, bookName, bookDescription, bookAuthor, bookQuantity, images })
-    alert("Book added successfully!")
-    setIsbn("")
-    setBookName("")
-    setBookAuthor("")
-    setQuantity("")
-    setBookDescription("")
-    setImages([])
-        if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity) {
+    e.preventDefault();
+    
+    if (!isbn ||!bookName ||!bookDescription ||!bookAuthor ||!bookQuantity) {
       alert("All fields are required.");
       return;
     }
+      const bookData = {
+        ISBN: isbn,
+        BookName: bookName,
+        Author: bookAuthor,
+        Description: bookDescription,
+        Quantity: bookQuantity,
+    };
 
     try {
-      console.log("Sending data:", { isbn, bookName, bookDescription, bookAuthor, bookQuantity});
-        const data = {
-      isbn,
-      bookName,
-      bookDescription,
-      bookAuthor,
-      bookQuantity,
-      // images, 
-        };
-      
-      const response = await fetch('/api/books', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      console.log("API Response:", result);
-
-      if (response.ok) {
-        alert('Book added successfully!');
-        setIsbn('');
-        setBookName('');
-        setBookDescription('');
-        setBookAuthor('');
-        setQuantity('');
+        const response = await axios.post('https://api.sheetbest.com/sheets/d5b080a8-0c21-44d8-8e17-f32f4f970fbf', bookData);
+        console.log(response.data);
+        alert("Book added successfully!");
+        
+        // Clear form fields after submission
+        setIsbn("");
+        setBookName("");
+        setBookAuthor("");
+        setBookDescription("");
+        setQuantity("");
         setImages([]);
-      } else {
-        alert(`Failed to add book: ${result.error}`);
-      }
     } catch (error) {
-      console.error('Error during API call:', error);
-      alert('An unexpected error occurred');
+        console.error("Error adding book:", error);
+        alert("There was an error adding the book.");
     }
-  }
+  };
+  
+  // https://api.sheetbest.com/sheets/d5b080a8-0c21-44d8-8e17-f32f4f970fbf
+
 
   return (
     <Card className="md:rounded-lg rounded-none">
@@ -145,7 +158,7 @@ export function AddBooksTabComponent() {
               <Label htmlFor="author">Book Author</Label>
               <Input
                 id="author"
-                placeholder="Enter ISBN"
+                placeholder="Enter Author Name"
                 value={bookAuthor}
                 onChange={(e) => setBookAuthor(e.target.value)}
                 required
@@ -214,7 +227,9 @@ export function AddBooksTabComponent() {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="bookDescription">Book Description</Label>
-              <Button>Fetch Discription</Button>
+              <Button type="button" onClick={() => generateDiscription()}>
+                {isSubmitting ? <><Loader2Icon className="mr-2 h-4 w-4 animate-spin" />Fetching</> : 'Fetch Description'}
+              </Button>
             </div>
             <Textarea
               id="bookDescription"
@@ -222,7 +237,6 @@ export function AddBooksTabComponent() {
               value={bookDescription}
               onChange={(e) => setBookDescription(e.target.value)}
               rows={4}
-              required
             />
           </div>
           <Button type="submit" className="w-full">Add Book</Button>
