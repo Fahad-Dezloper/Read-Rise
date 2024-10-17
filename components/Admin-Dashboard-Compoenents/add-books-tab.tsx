@@ -89,42 +89,85 @@ export function AddBooksTabComponent() {
     }
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
     
-    if (!isbn ||!bookName ||!bookDescription ||!bookAuthor ||!bookQuantity) {
-      alert("All fields are required.");
-      return;
-    }
-      const bookData = {
-        ISBN: isbn,
-        BookName: bookName,
-        Author: bookAuthor,
-        Description: bookDescription,
-        Quantity: bookQuantity,
-    };
+  //   if (!isbn ||!bookName ||!bookDescription ||!bookAuthor ||!bookQuantity) {
+  //     alert("All fields are required.");
+  //     return;
+  //   }
+  //     const bookData = {
+  //       ISBN: isbn,
+  //       BookName: bookName,
+  //       Author: bookAuthor,
+  //       Description: bookDescription,
+  //       Quantity: bookQuantity,
+  //   };
 
-    try {
-        const response = await axios.post('https://api.sheetbest.com/sheets/d5b080a8-0c21-44d8-8e17-f32f4f970fbf', bookData);
-        console.log(response.data);
-        alert("Book added successfully!");
+  //   try {
+  //       const response = await axios.post('https://api.sheetbest.com/sheets/d5b080a8-0c21-44d8-8e17-f32f4f970fbf', bookData);
+  //       console.log(response.data);
+  //       alert("Book added successfully!");
         
-        // Clear form fields after submission
-        setIsbn("");
-        setBookName("");
-        setBookAuthor("");
-        setBookDescription("");
-        setQuantity("");
-        setImages([]);
-    } catch (error) {
-        console.error("Error adding book:", error);
-        alert("There was an error adding the book.");
-    }
+  //       setIsbn("");
+  //       setBookName("");
+  //       setBookAuthor("");
+  //       setBookDescription("");
+  //       setQuantity("");
+  //       setImages([]);
+  //   } catch (error) {
+  //       console.error("Error adding book:", error);
+  //       alert("There was an error adding the book.");
+  //   }
+  // };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity) {
+    alert("All fields are required.");
+    return;
+  }
+
+  const bookData = {
+    ISBN: isbn,
+    BookName: bookName,
+    Author: bookAuthor,
+    Description: bookDescription,
+    Quantity: parseInt(bookQuantity),
+    // ImageUrls: images.map(image => URL.createObjectURL(image)), // Save URLs of the images
   };
+
+  try {
+    const response = await fetch('/queries/books', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(bookData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error adding book");
+    }
+
+    const result = await response.json();
+    console.log("Book added successfully:", result);
+    alert("Book added successfully!");
+
+    setIsbn("");
+    setBookName("");
+    setBookAuthor("");
+    setBookDescription("");
+    setQuantity("");
+    setImages([]);
+  } catch (error) {
+    console.error("Error adding book:", error);
+    alert("There was an error adding the book.");
+  }
+};
+
   
-  // https://api.sheetbest.com/sheets/d5b080a8-0c21-44d8-8e17-f32f4f970fbf
-
-
   return (
     <Card className="md:rounded-lg rounded-none">
       <CardHeader>

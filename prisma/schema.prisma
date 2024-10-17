@@ -16,10 +16,10 @@ model User {
   role          String?
   memberID      String?         @unique
   phoneNumber   String?
-  subscription  Subscription? 
+  subscription  Subscription?
+  lentBooks     LentBook[] @relation("UserLentBooks")
   accounts      Account[]
   sessions      Session[]
-  // Optional for WebAuthn support
   Authenticator Authenticator[]
  
   createdAt DateTime @default(now())
@@ -37,6 +37,17 @@ model Subscription {
 
   createdAt   DateTime        @default(now())
 }
+model LentBook {
+  id          String   @id @default(auto()) @map("_id")  @db.ObjectId
+  bookId      String 
+  bookName    String   
+  bookAuthor  String 
+  bookIsbn    String
+  lendDate    DateTime 
+  lendDays    Int      
+  userId      String   @db.ObjectId
+  user        User     @relation("UserLentBooks", fields: [userId], references: [id])
+}
 
 enum PlanType {
   NONE
@@ -49,6 +60,16 @@ enum SubscriptionStatus {
   NO_SUBSCRIPTION
   ACTIVE
   INACTIVE
+}
+
+model Book{
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  ISBN        String   @unique
+  BookName    String
+  Author      String
+  Description String
+  Quantity    Int
+  createdAt   DateTime @default(now())
 }
 
  

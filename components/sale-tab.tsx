@@ -8,17 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 
-const fetchBookDetails = async (isbn) => {
-  try {
-    const response = await fetch(`/queries/books?isbn=${isbn}`)
-    if (!response.ok) {
-      throw new Error('Book not found');
-    }
-    const book = await response.json();
-    console.log(book)
-    return book;
-  } catch (error) {
-    console.log("error fetching book data", error)
+// Mock function to fetch book details
+const fetchBookDetails = (isbn) => {
+  // In a real application, this would be an API call
+  return {
+    title: "To Kill a Mockingbird",
+    author: "Harper Lee",
+    isbn: "9780446310789",
+    quantity: 5,
+    imageUrl: "/placeholder.svg"
   }
 }
 
@@ -30,17 +28,19 @@ export function SaleTabComponent() {
   const [saleType, setSaleType] = useState("")
   const [bookDetails, setBookDetails] = useState(null)
 
-  const handleIsbnSubmit = async () => {
+  const handleIsbnSubmit = () => {
     if (isbn) {
-      const details = await fetchBookDetails(isbn)
+      const details = fetchBookDetails(isbn)
       setBookDetails(details)
-      console.log("Hi i am book details", bookDetails)
     }
   }
 
-const handleLendBook = async () => {
-  if (!bookDetails || !memberId) return;
-};
+  const handleLendBook = () => {
+    if (!bookDetails) return
+    const expiryDate = new Date()
+    expiryDate.setDate(expiryDate.getDate() + parseInt(lendDays))
+    alert(`Book "${bookDetails.title}" lent to Member ${memberId} until ${expiryDate.toLocaleDateString()}`)
+  }
 
   const handleSaleBook = () => {
     if (!bookDetails) return
@@ -68,19 +68,19 @@ const handleLendBook = async () => {
           </div>
           {bookDetails && (
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="flex gap-4 mt-12">
+              <div className="space-y-4">
                 <Image
-                  src="https://www.midlandbookshop.com/s/607fe93d7eafcac1f2c73ea4/66c87b4b34d8b8015500eb60/81qftkssitl-_sy425_-640x640.jpg"
-                  alt="book Title"
-                  width={150}
-                  height={150}
-                  className="rounded-md h-fit"
+                  src={bookDetails.imageUrl}
+                  alt={bookDetails.title}
+                  width={200}
+                  height={300}
+                  className="w-full h-auto"
                 />
                 <div>
-                  <h3 className="text-lg font-semibold">{bookDetails.BookName}</h3>
-                  <p>Author: {bookDetails.Author}</p>
-                  <p>ISBN: {bookDetails.ISBN}</p>
-                  <p>Quantity: {bookDetails.Quantity}</p>
+                  <h3 className="text-lg font-semibold">{bookDetails.title}</h3>
+                  <p>Author: {bookDetails.author}</p>
+                  <p>ISBN: {bookDetails.isbn}</p>
+                  <p>Quantity: {bookDetails.quantity}</p>
                 </div>
               </div>
               <div className="space-y-4">
