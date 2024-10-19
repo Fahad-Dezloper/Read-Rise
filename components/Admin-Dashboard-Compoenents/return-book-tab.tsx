@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Search, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
 // Mock data for lent books
 const lentBooks = [
   { id: 1, memberId: "M001", bookName: "The Great Gatsby", isbn: "9780743273565", dueDate: "2023-07-01" },
@@ -35,7 +34,32 @@ export function ReturnBookTabComponent() {
   const [isLendReturnDialogOpen, setIsLendReturnDialogOpen] = useState(false)
   const [isSaleReturnDialogOpen, setIsSaleReturnDialogOpen] = useState(false)
   const [memberId, setMemberId] = useState("")
+  const [ user, setUser ] = useState(null);
 
+    useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('/queries/fetchUserLendBooks'); 
+        console.log(response);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setUser(data);
+        console.log("lend user:- ", user);
+        // setLoading(false);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchUsers();
+  }, []);
+  
+  
+  
+  
+  
+  
   const filteredLentBooks = lentBooks.filter((item) => {
     const matchesSearch = item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           item.bookName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -201,15 +225,24 @@ export function ReturnBookTabComponent() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredLentBooks.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.memberId}</TableCell>
-                    <TableCell>{item.bookName}</TableCell>
-                    <TableCell className="hidden md:table-cell">{item.isbn}</TableCell>
-                    <TableCell>{item.dueDate}</TableCell>
-                    <TableCell>${calculateLateFee(item.dueDate)}</TableCell>
-                  </TableRow>
+                {user?.map((user) => (
+                  user.lentBooks.map((book) => (
+                    <TableRow key={book.id}>
+                    <TableCell>{user.memberID}</TableCell>
+                    <TableCell>{book.bookName}</TableCell>
+                    <TableCell className="hidden md:table-cell">{book.bookIsbn}</TableCell>
+                      <TableCell>3 days</TableCell>
+                    {/* <TableCell>${calculateLateFee(user.dueDate)}</TableCell> */}
+                  </TableRow>  
+                  ))
                 ))}
+                  {/* <TableRow key={user.id}>
+                    <TableCell>{user.memberID}</TableCell>
+                    <TableCell>{user.LentBooks.bookName}</TableCell>
+                    <TableCell className="hidden md:table-cell">{user.isbn}</TableCell>
+                    <TableCell>{user.dueDate}</TableCell>
+                    <TableCell>${calculateLateFee(user.dueDate)}</TableCell>
+                  </TableRow> */}
               </TableBody>
             </Table>
           </div>
