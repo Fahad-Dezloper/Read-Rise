@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 
+
+// fetch book details from the API
 const fetchBookDetails = async (isbn) => {
   try {
     const response = await fetch(`/queries/books?isbn=${isbn}`)
@@ -22,10 +24,58 @@ const fetchBookDetails = async (isbn) => {
   }
 }
 
+
+// reduce the book quantity
+const handleIsbnlendBook = async (isbn) => { 
+  alert(`Lend Book ISBN is: ${isbn}`);
+     try {
+       const response = await fetch(`/queries/lendBooks?isbn=${isbn}`, {
+      method: 'PUT', // use PUT method
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+       
+    if (!response.ok) {
+      throw new Error('Book not found');
+    }
+    const Lendbook = await response.json();
+    console.log("I am lend book details update: ", Lendbook)
+    return Lendbook;
+  } catch (error) {
+    console.log("error fetching book data", error)
+  }
+}
+  
+// Add the ISBN to the user lend books array
+const addLendIsbntoUser = async (isbn, memberId, lendDays) => {
+  alert(`Update User Lend Books with ISBN: ${isbn}`)
+
+  try {
+    const response = await fetch(`/queries/updateUser?isbn=${isbn}&memberId=${memberId}&lendDays=${lendDays}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('User not found');
+    }
+    const Lenduser = await response.json();
+    console.log("I am Lend User Details", Lenduser)
+    return Lenduser;
+  } catch (error) {
+    console.log("Error Updating User", error)
+  }
+}
+
 export function SaleTabComponent() {
   const [isbn, setIsbn] = useState("")
   const [memberId, setMemberId] = useState("")
   const [lendDays, setLendDays] = useState("")
+  // const [lendDetails, setLendDetails] = useState(null)
   const [paymentMethod, setPaymentMethod] = useState("")
   const [saleType, setSaleType] = useState("")
   const [bookDetails, setBookDetails] = useState(null)
@@ -34,13 +84,25 @@ export function SaleTabComponent() {
     if (isbn) {
       const details = await fetchBookDetails(isbn)
       setBookDetails(details)
-      console.log("Hi i am book details", bookDetails)
+      console.log("Hi i am book details", details)
     }
   }
 
 const handleLendBook = async () => {
-  if (!bookDetails || !memberId) return;
-};
+  if (!bookDetails || !memberId) return alert('MEMBER ID is required');
+  if (isbn) {
+    const lendBookDet = await handleIsbnlendBook(isbn)
+    const userUpdate = await addLendIsbntoUser(isbn, memberId, lendDays)
+      // setBookDetails(details)
+     alert(`Hi i am  lend book details ${lendBookDet}`)
+    alert(`Hi i am  user update details ${userUpdate}`)
+    
+    setIsbn("")
+    setMemberId("")
+    setLendDays("")
+    setBookDetails(null)
+    }
+}
 
   const handleSaleBook = () => {
     if (!bookDetails) return

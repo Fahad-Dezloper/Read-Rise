@@ -7,24 +7,24 @@ generator client {
   provider = "prisma-client-js"
 }
  
-model User {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  email         String?         @unique
-  emailVerified DateTime?
-  image         String?
-  role          String?
-  memberID      String?         @unique
-  phoneNumber   String?
-  subscription  Subscription?
-  lentBooks     LentBook[] @relation("UserLentBooks")
-  accounts      Account[]
-  sessions      Session[]
-  Authenticator Authenticator[]
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+  model User {
+    id            String          @id @default(auto()) @map("_id") @db.ObjectId
+    name          String?
+    email         String?         @unique
+    emailVerified DateTime?
+    image         String?
+    role          String?
+    memberID      String?         @unique
+    phoneNumber   String?
+    subscription  Subscription?
+    lentBooks     LentBook[] @relation("UserLentBooks")
+    accounts      Account[]
+    sessions      Session[]
+    Authenticator Authenticator[]
+  
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+  }
 
 model Subscription {
   id          String          @id @default(auto()) @map("_id") @db.ObjectId
@@ -37,6 +37,7 @@ model Subscription {
 
   createdAt   DateTime        @default(now())
 }
+
 model LentBook {
   id          String   @id @default(auto()) @map("_id")  @db.ObjectId
   bookId      String 

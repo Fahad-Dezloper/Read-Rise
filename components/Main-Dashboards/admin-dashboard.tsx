@@ -9,7 +9,7 @@ import { UsersTabComponent } from "../Admin-Dashboard-Compoenents/users-tab"
 import { SaleTabComponent } from "../Admin-Dashboard-Compoenents/sale-tab"
 import { SoldBooksTabComponent } from "../Admin-Dashboard-Compoenents/sold-books-tab"
 import { AddBooksTabComponent } from "../Admin-Dashboard-Compoenents/add-books-tab"
-import { ReturnBookTabComponent } from "../return-book-tab"
+import { ReturnBookTabComponent } from "../Admin-Dashboard-Compoenents/return-book-tab"
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("users")
