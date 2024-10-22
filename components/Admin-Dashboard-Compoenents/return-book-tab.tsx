@@ -9,8 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-// Mock data for lent books
-const lentBooks = [
+import { type } from "os"
+// Mock data for lend books
+const lendBooks = [
   { id: 1, memberId: "M001", bookName: "The Great Gatsby", isbn: "9780743273565", dueDate: "2023-07-01" },
   { id: 2, memberId: "M002", bookName: "To Kill a Mockingbird", isbn: "9780446310789", dueDate: "2023-06-25" },
   { id: 3, memberId: "M003", bookName: "1984", isbn: "9780451524935", dueDate: "2023-07-05" },
@@ -22,10 +23,47 @@ const userBooks = {
     { id: 1, bookName: "Pride and Prejudice", isbn: "9780141439518", purchaseDate: "2023-05-15" },
     { id: 2, bookName: "The Catcher in the Rye", isbn: "9780316769174", purchaseDate: "2023-06-01" },
   ],
-  lent: [
+  lend: [
     { id: 3, bookName: "The Great Gatsby", isbn: "9780743273565", dueDate: "2023-07-01" },
     { id: 4, bookName: "1984", isbn: "9780451524935", dueDate: "2023-07-05" },
   ],
+}
+
+const LendReturn = async (memberID) => {
+  try {
+    const response = await fetch(`/queries/fetchUserLendBooks?memberID=${memberID}`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch data of user lend books')
+    }
+    const data = await response.json()
+    console.log('User Lend Books: ', data)
+    return data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// update the book quantity to return
+const UpdateBook = async (isbn) => { 
+  // alert(`Lend Book ISBN is: ${isbn}`);
+     try {
+       const response = await fetch(`/queries/lendBooks?isbn=${isbn}}`, {
+      method: 'PUT', // use PUT method
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+       
+    if (!response.ok) {
+      throw new Error('Book not found');
+    }
+    const LendReturnbook = await response.json();
+    console.log("I am lend return book details update: ", LendReturnbook)
+    return LendReturnbook;
+  } catch (error) {
+    console.log("error fetching book data", error)
+  }
 }
 
 export function ReturnBookTabComponent() {
@@ -34,12 +72,13 @@ export function ReturnBookTabComponent() {
   const [isLendReturnDialogOpen, setIsLendReturnDialogOpen] = useState(false)
   const [isSaleReturnDialogOpen, setIsSaleReturnDialogOpen] = useState(false)
   const [memberId, setMemberId] = useState("")
+  const [lendBooks, setlendBooks] = useState(null)
   const [ user, setUser ] = useState(null);
 
     useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('/queries/fetchUserLendBooks'); 
+        const response = await fetch('/queries/UsersLendBooks'); 
         console.log(response);
         if (!response.ok) {
           throw new Error('Failed to fetch data');
@@ -53,35 +92,30 @@ export function ReturnBookTabComponent() {
       }
     };
     fetchUsers();
-  }, []);
+    }, []);
   
   
-  
-  
-  
-  
-  const filteredLentBooks = lentBooks.filter((item) => {
-    const matchesSearch = item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          item.bookName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          item.isbn.includes(searchQuery)
-    const matchesFilter = filterType === "all" ||
-                          (filterType === "upcoming" && new Date(item.dueDate) > new Date()) ||
-                          (filterType === "overdue" && new Date(item.dueDate) < new Date())
-    return matchesSearch && matchesFilter
-  })
+  // const filteredLendBooks = lendBooks.filter((item) => {
+  //   const matchesSearch = item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //                         item.bookName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //                         item.isbn.includes(searchQuery)
+  //   const matchesFilter = filterType === "all" ||
+  //                         (filterType === "upcoming" && new Date(item.dueDate) > new Date()) ||
+  //                         (filterType === "overdue" && new Date(item.dueDate) < new Date())
+  //   return matchesSearch && matchesFilter
+  // })
 
-  const handleReturn = (id, type) => {
-    // Here you would typically send this data to your backend
-    console.log(`Returning ${type} book with id: ${id}`)
+  const handleLendReturn = async () => {
+    const response = await LendReturn(memberId);
+    console.log(`response of data: ${response}`)
+    setlendBooks(response)
     alert(`Book returned successfully!`)
   }
 
-  const calculateLateFee = (dueDate) => {
-    const due = new Date(dueDate)
-    const today = new Date()
-    const diffTime = Math.abs(today - due)
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays > 0 ? diffDays * 2 : 0
+  const handleLendReturnButton = async (ISBN) => {
+    const bookUpdate = await UpdateBook(ISBN);
+    console.log("book updated successfully");
+    alert("book updated successfully")
   }
 
   return (
@@ -115,9 +149,10 @@ export function ReturnBookTabComponent() {
                     value={memberId}
                     onChange={(e) => setMemberId(e.target.value)}
                   />
-                  {memberId && (
+                  <Button onClick={() => handleLendReturn()}>Fetch</Button>
+                  {lendBooks ? (
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Lent Books</h3>
+                      <h3 className="text-lg font-semibold">Lend Books</h3>
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -129,21 +164,21 @@ export function ReturnBookTabComponent() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {userBooks.lent.map((book) => (
-                            <TableRow key={book.id}>
+                          {lendBooks.lendBooks?.map((book) => (
+                            <TableRow key={book.bookId}>
                               <TableCell>{book.bookName}</TableCell>
-                              <TableCell>{book.isbn}</TableCell>
-                              <TableCell>{book.dueDate}</TableCell>
-                              <TableCell>${calculateLateFee(book.dueDate)}</TableCell>
+                              <TableCell>{book.bookIsbn}</TableCell>
+                              <TableCell>{book.lendEndDate}</TableCell>
+                              <TableCell>{book.lendDate}</TableCell>
                               <TableCell>
-                                <Button size="sm" onClick={() => handleReturn(book.id, 'lend')}>Return</Button>
+                                <Button size="sm" onClick={() => handleLendReturnButton(book.bookIsbn)}>Return</Button>
                               </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
                     </div>
-                  )}
+                  ): ""}
                 </div>
               </DialogContent>
             </Dialog>
@@ -195,7 +230,7 @@ export function ReturnBookTabComponent() {
           <div className="hidden md:block">
             <Tabs value={filterType} onValueChange={setFilterType}>
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="all">All Lent Books</TabsTrigger>
+                <TabsTrigger value="all">All Lend Books</TabsTrigger>
                 <TabsTrigger value="upcoming">Upcoming Returns</TabsTrigger>
                 <TabsTrigger value="overdue">Overdue Returns</TabsTrigger>
               </TabsList>
@@ -204,10 +239,10 @@ export function ReturnBookTabComponent() {
           <div className="md:hidden">
             <Select value={filterType} onValueChange={setFilterType}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Filter lent books" />
+                <SelectValue placeholder="Filter lend books" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Lent Books</SelectItem>
+                <SelectItem value="all">All Lend Books</SelectItem>
                 <SelectItem value="upcoming">Upcoming Returns</SelectItem>
                 <SelectItem value="overdue">Overdue Returns</SelectItem>
               </SelectContent>
@@ -226,7 +261,7 @@ export function ReturnBookTabComponent() {
               </TableHeader>
               <TableBody>
                 {user?.map((user) => (
-                  user.lentBooks.map((book) => (
+                  user.lendBooks.map((book) => (
                     <TableRow key={book.id}>
                     <TableCell>{user.memberID}</TableCell>
                     <TableCell>{book.bookName}</TableCell>
@@ -238,7 +273,7 @@ export function ReturnBookTabComponent() {
                 ))}
                   {/* <TableRow key={user.id}>
                     <TableCell>{user.memberID}</TableCell>
-                    <TableCell>{user.LentBooks.bookName}</TableCell>
+                    <TableCell>{user.LendBooks.bookName}</TableCell>
                     <TableCell className="hidden md:table-cell">{user.isbn}</TableCell>
                     <TableCell>{user.dueDate}</TableCell>
                     <TableCell>${calculateLateFee(user.dueDate)}</TableCell>

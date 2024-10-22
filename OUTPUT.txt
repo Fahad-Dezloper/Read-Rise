@@ -1,1 +1,9 @@
 start user and admin interaction with new repository
+
+work to do next before changing repository
+--> lend return
+- lend return updating book quantity not updating the lend book model. and user
+
+
+
+--> show lend book on user dashboard and update it also

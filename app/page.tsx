@@ -7,7 +7,7 @@ const page = async () => {
     <div className="flex w-full h-screen items-center justify-center">
       <h1 className='text-3xl font-semibold font-mono pb-11'>R2 Library Management System</h1>
       {/* <AddBookForm /> */}
-      <ImagePasteComponent />
+      {/* <ImagePasteComponent /> */}
     </div>
   )
 }

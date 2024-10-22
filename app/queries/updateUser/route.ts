@@ -25,7 +25,10 @@ export async function PUT(req: Request) {
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
 
-        const newLentBook = await prisma.lentBook.create({
+        const lendDate = new Date();
+        const lendEndDate = new Date(lendDate.getTime() + lendDays * 24 * 60 * 60 * 1000);
+
+        const newLendBook = await prisma.lendBook.create({
             data: {
                 bookId: bookDetails.id,
                 bookName: bookDetails.BookName, 
@@ -33,7 +36,8 @@ export async function PUT(req: Request) {
                 bookIsbn: ISBN,
                 lendDate: new Date(),
                 lendDays: lendDays,
-                userId: (await prisma.user.findUnique({ where: { memberID } })).id // Find the user and get their ID
+                lendEndDate: lendEndDate,
+                userId: (await prisma.user.findUnique({ where: { memberID } })).id
             }
         });
 
@@ -41,8 +45,8 @@ export async function PUT(req: Request) {
         const updateUserLend = await prisma.user.update({
             where: { memberID },
             data: {
-                lentBooks: {
-                    connect: { id: newLentBook.id }
+                lendBooks: {
+                    connect: { id: newLendBook.id }
                 }
             }
         })

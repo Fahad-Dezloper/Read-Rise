@@ -26,10 +26,10 @@ const fetchBookDetails = async (isbn) => {
 
 
 // reduce the book quantity
-const handleIsbnlendBook = async (isbn) => { 
-  alert(`Lend Book ISBN is: ${isbn}`);
+const handleIsbnlendBook = async (isbn, quantity) => { 
+  // alert(`Lend Book ISBN is: ${isbn}`);
      try {
-       const response = await fetch(`/queries/lendBooks?isbn=${isbn}`, {
+       const response = await fetch(`/queries/lendBooks?isbn=${isbn}&quantity=${Number(quantity)}`, {
       method: 'PUT', // use PUT method
       headers: {
         'Content-Type': 'application/json',
@@ -50,10 +50,10 @@ const handleIsbnlendBook = async (isbn) => {
   
 // Add the ISBN to the user lend books array
 const addLendIsbntoUser = async (isbn, memberId, lendDays) => {
-  alert(`Update User Lend Books with ISBN: ${isbn}`)
+  // alert(`Update User Lend Books with ISBN: ${isbn}`)
 
   try {
-    const response = await fetch(`/queries/updateUser?isbn=${isbn}&memberId=${memberId}&lendDays=${lendDays}`, {
+    const response = await fetch(`/queries/updateUser?isbn=${isbn}&memberId=${memberId}&lendDays=${Number(lendDays)}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -75,10 +75,12 @@ export function SaleTabComponent() {
   const [isbn, setIsbn] = useState("")
   const [memberId, setMemberId] = useState("")
   const [lendDays, setLendDays] = useState("")
-  // const [lendDetails, setLendDetails] = useState(null)
   const [paymentMethod, setPaymentMethod] = useState("")
   const [saleType, setSaleType] = useState("")
   const [bookDetails, setBookDetails] = useState(null)
+  const [quantity, setQuantity] = useState(1)
+
+  const [loading, setLoading] = useState(false)
 
   const handleIsbnSubmit = async () => {
     if (isbn) {
@@ -89,19 +91,33 @@ export function SaleTabComponent() {
   }
 
 const handleLendBook = async () => {
-  if (!bookDetails || !memberId) return alert('MEMBER ID is required');
-  if (isbn) {
-    const lendBookDet = await handleIsbnlendBook(isbn)
-    const userUpdate = await addLendIsbntoUser(isbn, memberId, lendDays)
-      // setBookDetails(details)
-     alert(`Hi i am  lend book details ${lendBookDet}`)
-    alert(`Hi i am  user update details ${userUpdate}`)
-    
-    setIsbn("")
-    setMemberId("")
-    setLendDays("")
-    setBookDetails(null)
+  setLoading(true);
+
+  try {
+    if (!bookDetails || !memberId) {
+      alert('MEMBER ID is required');
+      setLoading(false);
+      return;
     }
+
+    if (isbn) {
+      const lendBookDet = await handleIsbnlendBook(isbn, quantity);
+      const userUpdate = await addLendIsbntoUser(isbn, memberId, lendDays);
+
+      // Reset states after successful operation
+      setIsbn("");
+      setMemberId("");
+      setLendDays("");
+      setQuantity(1);
+      setBookDetails(null);
+    } else {
+      alert('ISBN is required');
+    }
+  } catch (error) {
+    console.error('Error in lending book:', error);
+  } finally {
+    setLoading(false);
+  }
 }
 
   const handleSaleBook = () => {
@@ -189,7 +205,17 @@ const handleLendBook = async () => {
                         />
                       </div>
                     )}
-                    <Button onClick={handleLendBook}>Lend</Button>
+                    <div className="space-y-2">
+                      <Label htmlFor="quantity">Quantity</Label>
+                      <Input
+                        id="quantity"
+                        type="number"
+                        placeholder="Quantity"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
+                      />
+                    </div>
+                    <Button onClick={handleLendBook}>{ loading ? 'Lending' : 'Lend'}</Button>
                   </div>
                 )}
                 {saleType === "sale" && (

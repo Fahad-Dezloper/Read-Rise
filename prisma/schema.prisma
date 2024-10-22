@@ -17,7 +17,7 @@ generator client {
     memberID      String?         @unique
     phoneNumber   String?
     subscription  Subscription?
-    lentBooks     LentBook[] @relation("UserLentBooks")
+    lendBooks     LendBook[] @relation("UserLendBooks")
     accounts      Account[]
     sessions      Session[]
     Authenticator Authenticator[]
@@ -38,16 +38,17 @@ model Subscription {
   createdAt   DateTime        @default(now())
 }
 
-model LentBook {
+model LendBook {
   id          String   @id @default(auto()) @map("_id")  @db.ObjectId
   bookId      String 
   bookName    String   
   bookAuthor  String 
   bookIsbn    String
   lendDate    DateTime 
-  lendDays    Int      
+  lendDays    Int
+  lendEndDate DateTime      
   userId      String   @db.ObjectId
-  user        User     @relation("UserLentBooks", fields: [userId], references: [id])
+  user        User     @relation("UserLendBooks", fields: [userId], references: [id])
 }
 
 enum PlanType {
