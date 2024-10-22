@@ -9,26 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { type } from "os"
-// Mock data for lend books
-const lendBooks = [
-  { id: 1, memberId: "M001", bookName: "The Great Gatsby", isbn: "9780743273565", dueDate: "2023-07-01" },
-  { id: 2, memberId: "M002", bookName: "To Kill a Mockingbird", isbn: "9780446310789", dueDate: "2023-06-25" },
-  { id: 3, memberId: "M003", bookName: "1984", isbn: "9780451524935", dueDate: "2023-07-05" },
-]
 
-// Mock data for user books
-const userBooks = {
-  bought: [
-    { id: 1, bookName: "Pride and Prejudice", isbn: "9780141439518", purchaseDate: "2023-05-15" },
-    { id: 2, bookName: "The Catcher in the Rye", isbn: "9780316769174", purchaseDate: "2023-06-01" },
-  ],
-  lend: [
-    { id: 3, bookName: "The Great Gatsby", isbn: "9780743273565", dueDate: "2023-07-01" },
-    { id: 4, bookName: "1984", isbn: "9780451524935", dueDate: "2023-07-05" },
-  ],
-}
 
+// fetch user lend books
 const LendReturn = async (memberID) => {
   try {
     const response = await fetch(`/queries/fetchUserLendBooks?memberID=${memberID}`)
@@ -47,8 +30,8 @@ const LendReturn = async (memberID) => {
 const UpdateBook = async (isbn) => { 
   // alert(`Lend Book ISBN is: ${isbn}`);
      try {
-       const response = await fetch(`/queries/lendBooks?isbn=${isbn}}`, {
-      method: 'PUT', // use PUT method
+       const response = await fetch(`/queries/lendBookReturn?isbn=${isbn}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -62,9 +45,34 @@ const UpdateBook = async (isbn) => {
     console.log("I am lend return book details update: ", LendReturnbook)
     return LendReturnbook;
   } catch (error) {
-    console.log("error fetching book data", error)
+    alert("error fetching book data", error)
   }
 }
+
+// update user lend book model
+const handleReturnBook = async (lendBookId, userId) => {
+  try {
+    const response = await fetch(`/queries/UsersLendBooks?userId=${userId}&lendBookId=${lendBookId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to return the book');
+    }
+
+    const updatedUser = await response.json();
+    console.log('Updated User after return:', updatedUser);
+
+    // Update the UI after the book is returned (e.g., re-fetch the lendBooks data)
+    // Call a function to refresh the lendBooks list or remove the returned book from the state.
+  } catch (error) {
+    console.error('Error returning book:', error);
+  }
+};
+
 
 export function ReturnBookTabComponent() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -75,6 +83,7 @@ export function ReturnBookTabComponent() {
   const [lendBooks, setlendBooks] = useState(null)
   const [ user, setUser ] = useState(null);
 
+  // fetch all the user who have lended books
     useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -93,27 +102,21 @@ export function ReturnBookTabComponent() {
     };
     fetchUsers();
     }, []);
-  
-  
-  // const filteredLendBooks = lendBooks.filter((item) => {
-  //   const matchesSearch = item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //                         item.bookName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //                         item.isbn.includes(searchQuery)
-  //   const matchesFilter = filterType === "all" ||
-  //                         (filterType === "upcoming" && new Date(item.dueDate) > new Date()) ||
-  //                         (filterType === "overdue" && new Date(item.dueDate) < new Date())
-  //   return matchesSearch && matchesFilter
-  // })
 
+
+  // fetch unique user lended books
   const handleLendReturn = async () => {
     const response = await LendReturn(memberId);
-    console.log(`response of data: ${response}`)
+    // console.log(`response of data: ${response}`)
     setlendBooks(response)
-    alert(`Book returned successfully!`)
+    // alert(`Book returned successfully!`)
   }
 
-  const handleLendReturnButton = async (ISBN) => {
+  // update return book on user and lend books model
+  const handleLendReturnButton = async (ISBN, userId, bookId) => {
+    console.log(ISBN, userId, bookId)
     const bookUpdate = await UpdateBook(ISBN);
+    const userUpdate = await handleReturnBook(bookId, userId)
     console.log("book updated successfully");
     alert("book updated successfully")
   }
@@ -171,7 +174,7 @@ export function ReturnBookTabComponent() {
                               <TableCell>{book.lendEndDate}</TableCell>
                               <TableCell>{book.lendDate}</TableCell>
                               <TableCell>
-                                <Button size="sm" onClick={() => handleLendReturnButton(book.bookIsbn)}>Return</Button>
+                                <Button size="sm" onClick={() => handleLendReturnButton(book.bookIsbn, book.userId, book.id)}>Return</Button>
                               </TableCell>
                             </TableRow>
                           ))}
