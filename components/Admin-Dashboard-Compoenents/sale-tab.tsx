@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 
 
+
+// Lend
 // fetch book details from the API
 const fetchBookDetails = async (isbn) => {
   try {
@@ -23,8 +25,6 @@ const fetchBookDetails = async (isbn) => {
     console.log("error fetching book data", error)
   }
 }
-
-
 // reduce the book quantity
 const handleIsbnlendBook = async (isbn, quantity) => { 
   // alert(`Lend Book ISBN is: ${isbn}`);
@@ -46,14 +46,13 @@ const handleIsbnlendBook = async (isbn, quantity) => {
   } catch (error) {
     console.log("error fetching book data", error)
   }
-}
-  
+} 
 // Add the ISBN to the user lend books array
 const addLendIsbntoUser = async (isbn, memberId, lendDays) => {
   // alert(`Update User Lend Books with ISBN: ${isbn}`)
 
   try {
-    const response = await fetch(`/queries/updateUser?isbn=${isbn}&memberId=${memberId}&lendDays=${Number(lendDays)}`, {
+    const response = await fetch(`/queries/updateUserLend?isbn=${isbn}&memberId=${memberId}&lendDays=${Number(lendDays)}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -71,6 +70,29 @@ const addLendIsbntoUser = async (isbn, memberId, lendDays) => {
   }
 }
 
+// Sale
+// Add the ISBN to the user Purchase Books Array
+const UserSaleModelUpdate = async (isbn, memberId, price, paymentMethod) => {
+  try {
+    const response = await fetch(`/queries/updateUserPurchase?isbn=${isbn}&memberId=${memberId}&price=${Number(price)}&paymentMethod=${paymentMethod}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('User not found');
+    }
+    const PurchaseUser = await response.json();
+    console.log("I am purchase User Details", PurchaseUser)
+    return PurchaseUser;
+  } catch (error) {
+    console.log("Error Updating User", error)
+  } 
+}
+
+
 export function SaleTabComponent() {
   const [isbn, setIsbn] = useState("")
   const [memberId, setMemberId] = useState("")
@@ -79,9 +101,11 @@ export function SaleTabComponent() {
   const [saleType, setSaleType] = useState("")
   const [bookDetails, setBookDetails] = useState(null)
   const [quantity, setQuantity] = useState(1)
+  const [price, setPrice] = useState()
 
   const [loading, setLoading] = useState(false)
 
+  // Lend
   const handleIsbnSubmit = async () => {
     if (isbn) {
       const details = await fetchBookDetails(isbn)
@@ -90,39 +114,64 @@ export function SaleTabComponent() {
     }
   }
 
-const handleLendBook = async () => {
-  setLoading(true);
+  const handleLendBook = async () => {
+    setLoading(true);
 
-  try {
-    if (!bookDetails || !memberId) {
-      alert('MEMBER ID is required');
+    try {
+      if (!bookDetails || !memberId) {
+        alert('MEMBER ID is required');
+        setLoading(false);
+        return;
+      }
+
+      if (isbn) {
+        const lendBookDet = await handleIsbnlendBook(isbn, quantity);
+        const userUpdate = await addLendIsbntoUser(isbn, memberId, lendDays);
+
+        // Reset states after successful operation
+        setIsbn("");
+        setMemberId("");
+        setLendDays("");
+        setQuantity(1);
+        setBookDetails(null);
+      } else {
+        alert('ISBN is required');
+      }
+    } catch (error) {
+      console.error('Error in lending book:', error);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    if (isbn) {
-      const lendBookDet = await handleIsbnlendBook(isbn, quantity);
-      const userUpdate = await addLendIsbntoUser(isbn, memberId, lendDays);
-
-      // Reset states after successful operation
-      setIsbn("");
-      setMemberId("");
-      setLendDays("");
-      setQuantity(1);
-      setBookDetails(null);
-    } else {
-      alert('ISBN is required');
-    }
-  } catch (error) {
-    console.error('Error in lending book:', error);
-  } finally {
-    setLoading(false);
   }
-}
 
-  const handleSaleBook = () => {
-    if (!bookDetails) return
-    alert(`Book "${bookDetails.title}" sold to Member ${memberId}. Payment method: ${paymentMethod}`)
+  // Sale
+   const handleSaleBook = async () => {
+    try {
+      if (!bookDetails || !memberId || !paymentMethod || !price) {
+        alert('MEMBER ID & Payment Method & Price is required');
+        setLoading(false);
+        return;
+      }
+
+      if (isbn) {
+        const updateBookqt = await handleIsbnlendBook(isbn, quantity);
+        const userUpdate = await UserSaleModelUpdate(isbn, memberId, price, paymentMethod);
+
+        // Reset states after successful operation
+        setIsbn("");
+        setMemberId("");
+        setQuantity(1);
+        setPrice(null);
+        setPaymentMethod(null);
+        setBookDetails(null);
+      } else {
+        alert('ISBN is required');
+      }
+    } catch (error) {
+      console.error('Error in lending book:', error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -163,8 +212,8 @@ const handleLendBook = async () => {
               </div>
               <div className="space-y-4">
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setSaleType("lend")}>Lend</Button>
-                  <Button onClick={() => setSaleType("sale")}>Sale</Button>
+                  <Button variant="outline" disabled={bookDetails.Quantity <= 0} onClick={() => setSaleType("lend")}>Lend</Button>
+                  <Button onClick={() => setSaleType("sale")} disabled={bookDetails.Quantity <= 0}>Sale</Button>
                 </div>
                 {saleType === "lend" && (
                   <div className="space-y-4">
@@ -218,6 +267,7 @@ const handleLendBook = async () => {
                     <Button onClick={handleLendBook}>{ loading ? 'Lending' : 'Lend'}</Button>
                   </div>
                 )}
+
                 {saleType === "sale" && (
                   <div className="space-y-4">
                     <div className="space-y-2">
@@ -227,6 +277,26 @@ const handleLendBook = async () => {
                         placeholder="Member ID"
                         value={memberId}
                         onChange={(e) => setMemberId(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="quantity">Quantity</Label>
+                      <Input
+                        id="quantity"
+                        type="number"
+                        placeholder="Quantity"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="amount">Price of the Book</Label>
+                      <Input
+                        id="amount"
+                        placeholder="Price"
+                        value={price}
+                        type="number"
+                        onChange={(e) => setPrice(e.target.value)}
                       />
                     </div>
                     <div className="space-y-2">
@@ -242,7 +312,7 @@ const handleLendBook = async () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button onClick={handleSaleBook}>Sale</Button>
+                    <Button onClick={() => handleSaleBook()}>{loading ? 'Selling' : 'Sale'}</Button>
                   </div>
                 )}
               </div>

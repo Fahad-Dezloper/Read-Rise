@@ -2,3 +2,8 @@ start user and admin interaction with new repository
 
 user side
 --> show lend books on user dashboard and update it also as it is completed in admin panel work
+--> show purchased book on user dashboard and update it also as it is completed in admin panel work
+
+admin panel
+--> Make filters work all tabs in admin panel
+--> in book model add price option tooo and when fetching data fetch the price and fill price option

@@ -18,6 +18,7 @@ generator client {
     phoneNumber   String?
     subscription  Subscription?
     lendBooks     LendBook[] @relation("UserLendBooks")
+    purchasedBooks PurchsedBook[] @relation("UserPurchasedBooks")
     accounts      Account[]
     sessions      Session[]
     Authenticator Authenticator[]
@@ -49,6 +50,19 @@ model LendBook {
   lendEndDate DateTime      
   userId      String   @db.ObjectId
   user        User     @relation("UserLendBooks", fields: [userId], references: [id])
+}
+
+model PurchsedBook {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  bookId      String
+  bookName    String
+  bookAuthor  String
+  bookIsbn    String
+  purchaseDate DateTime
+  purchaseMethod String
+  amount      Int
+  user        User     @relation("UserPurchasedBooks", fields: [userId], references: [id])
 }
 
 enum PlanType {

@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
+// Lend
 // fetch user lend books
 const LendReturn = async (memberID) => {
   try {
@@ -42,7 +43,7 @@ const UpdateBook = async (isbn) => {
       throw new Error('Book not found');
     }
     const LendReturnbook = await response.json();
-    console.log("I am lend return book details update: ", LendReturnbook)
+    console.log("I am return book details update: ", LendReturnbook)
     return LendReturnbook;
   } catch (error) {
     alert("error fetching book data", error)
@@ -73,6 +74,46 @@ const handleReturnBook = async (lendBookId, userId) => {
   }
 };
 
+// Sale
+const SaleReturn = async (memberID) => {
+  try {
+    const response = await fetch(`/queries/fetchUserPurchasedBooks?memberID=${memberID}`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch data of user lend books')
+    }
+    const data = await response.json()
+    console.log('User Purchased Books: ', data)
+    return data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// update user lend book model
+const handlePurchaseReturnBook = async (purchaseBookId, userId) => {
+  try {
+    const response = await fetch(`/queries/UsersPurchaseBooksReturn?userId=${userId}&purchaseBookId=${purchaseBookId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to return the book');
+    }
+
+    const updatedUser = await response.json();
+    console.log('Updated User after return:', updatedUser);
+
+    // Update the UI after the book is returned (e.g., re-fetch the lendBooks data)
+    // Call a function to refresh the lendBooks list or remove the returned book from the state.
+  } catch (error) {
+    console.error('Error returning book:', error);
+  }
+};
+
+
 
 export function ReturnBookTabComponent() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -81,6 +122,7 @@ export function ReturnBookTabComponent() {
   const [isSaleReturnDialogOpen, setIsSaleReturnDialogOpen] = useState(false)
   const [memberId, setMemberId] = useState("")
   const [lendBooks, setlendBooks] = useState(null)
+  const [saleBooks, setSaleBooks] = useState(null)
   const [ user, setUser ] = useState(null);
 
   // fetch all the user who have lended books
@@ -104,6 +146,7 @@ export function ReturnBookTabComponent() {
     }, []);
 
 
+    // Lend
   // fetch unique user lended books
   const handleLendReturn = async () => {
     const response = await LendReturn(memberId);
@@ -117,6 +160,25 @@ export function ReturnBookTabComponent() {
     console.log(ISBN, userId, bookId)
     const bookUpdate = await UpdateBook(ISBN);
     const userUpdate = await handleReturnBook(bookId, userId)
+    console.log("book updated successfully");
+    alert("book updated successfully")
+  }
+
+
+  // Sale
+   const handleSaleReturn = async () => {
+    const response = await SaleReturn(memberId);
+    // console.log(`response of data: ${response}`)
+     setSaleBooks(response)
+     console.log(saleBooks)
+    // alert(`Book returned successfully!`)
+   }
+  
+  // update return book on user and purchase books model
+    const handleSaleReturnButton = async (ISBN, userId, bookId) => {
+    console.log(ISBN, userId, bookId)
+    const bookUpdate = await UpdateBook(ISBN);
+    const userUpdate = await handlePurchaseReturnBook(bookId, userId)
     console.log("book updated successfully");
     alert("book updated successfully")
   }
@@ -199,7 +261,8 @@ export function ReturnBookTabComponent() {
                     value={memberId}
                     onChange={(e) => setMemberId(e.target.value)}
                   />
-                  {memberId && (
+                  <Button onClick={() => handleSaleReturn()}>Fetch</Button>
+                  {saleBooks ? (
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Bought Books</h3>
                       <Table>
@@ -208,24 +271,29 @@ export function ReturnBookTabComponent() {
                             <TableHead>Book Name</TableHead>
                             <TableHead>ISBN</TableHead>
                             <TableHead>Purchase Date</TableHead>
+                            <TableHead>Purchase Method</TableHead>
+                            <TableHead>Amount</TableHead>
                             <TableHead>Action</TableHead>
                           </TableRow>
                         </TableHeader>
+                        {/* onClick={() => handleReturn()} */}
                         <TableBody>
-                          {userBooks.bought.map((book) => (
+                          {saleBooks.purchasedBooks.map((book) => (
                             <TableRow key={book.id}>
                               <TableCell>{book.bookName}</TableCell>
-                              <TableCell>{book.isbn}</TableCell>
+                              <TableCell>{book.bookIsbn}</TableCell>
                               <TableCell>{book.purchaseDate}</TableCell>
+                              <TableCell>{book.purchaseMethod}</TableCell>
+                              <TableCell>{book.amount}</TableCell>
                               <TableCell>
-                                <Button size="sm" onClick={() => handleReturn(book.id, 'sale')}>Return</Button>
+                                <Button size="sm" onClick={() => handleSaleReturnButton(book.bookIsbn, book.userId, book.id)}>Return</Button>
                               </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
                     </div>
-                  )}
+                  ) : ""}
                 </div>
               </DialogContent>
             </Dialog>
