@@ -27,11 +27,11 @@ export async function POST(req: Request) {
 
 // FETCH: FETCH THE BOOK
 export async function GET(req: Request) {
-    console.log("fetching data")
+    // console.log("fetching data")
     try {
         const { searchParams } = new URL(req.url);
         const ISBN = searchParams.get('isbn');
-        console.log("fetching data of isbn", ISBN)
+        // console.log("fetching data of isbn", ISBN)
     if (!ISBN) {
       return new Response(JSON.stringify({ error: 'ISBN is required' }), { status: 400 });
         }
@@ -48,6 +48,6 @@ export async function GET(req: Request) {
 
     return new Response(JSON.stringify(book), { status: 200 });
     } catch (error) {
-        console.log("Error fetching Books: ", error);
+        // console.log("Error fetching Books: ", error);
     }
 }

@@ -48,7 +48,7 @@ export function UserDashboardMain({ email }: UserComponentProps) {
           };
 
           setUser(userData);
-          console.log("user with subscription", userData);
+          // console.log("user with subscription", userData);
         } catch (err) {
           setError('Error fetching user data');
           console.error(err);

@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 
 // Fetch and Update the book quantity
 export async function PUT(req: Request) {
-    console.log("updating lend data to user");
+    // console.log("updating lend data to user");
     try {
         const { searchParams } = new URL(req.url);
         const ISBN = searchParams.get('isbn');
         const memberID = searchParams.get('memberId');
         const lendDays = Number(searchParams.get('lendDays'));
-        console.log("request recived of : ", ISBN, memberID, lendDays)
+        // console.log("request recived of : ", ISBN, memberID, lendDays)
         if (!ISBN || !memberID) {
             return NextResponse.json({error: 'ISBN/memberID/lendDays is required'}, {status : 400})
         }
@@ -51,7 +51,7 @@ export async function PUT(req: Request) {
             }
         })
 
-        console.log("updated user book lend", updateUserLend)
+        // console.log("updated user book lend", updateUserLend)
         return NextResponse.json(updateUserLend)
     } catch (error) {
         console.log("Error Lending Boook to user", error)

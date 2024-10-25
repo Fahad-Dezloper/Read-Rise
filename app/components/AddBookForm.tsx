@@ -16,7 +16,7 @@ const AddBookForm = () => {
     }
 
     try {
-      console.log("Sending data:", { isbn, name, about });
+      // console.log("Sending data:", { isbn, name, about });
 
       const response = await fetch('/api/books', {
         method: 'POST',
@@ -25,7 +25,7 @@ const AddBookForm = () => {
       });
 
       const result = await response.json();
-      console.log("API Response:", result);
+      // console.log("API Response:", result);
 
       if (response.ok) {
         alert('Book added successfully!');

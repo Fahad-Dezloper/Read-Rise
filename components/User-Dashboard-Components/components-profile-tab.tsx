@@ -27,7 +27,7 @@ export function ProfileTab() {
         name,
         phoneNumber
       });
-      console.log("User Updates", response.data);
+      // console.log("User Updates", response.data);
       setUser({ ...user, name: response.data.name, phoneNumber: response.data.phoneNumber });
 
       if (adminSetUsers) {

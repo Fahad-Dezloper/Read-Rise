@@ -22,7 +22,7 @@ const AdminComponent: React.FC = () => {
         setError('Error fetching users');
       }
     };
-      console.log(users);
+      // console.log(users);
     fetchUsers();
   }, []);
 

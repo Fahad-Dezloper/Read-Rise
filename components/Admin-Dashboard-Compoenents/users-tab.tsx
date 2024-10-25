@@ -26,7 +26,7 @@ export function UsersTabComponent() {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('/queries/admin'); // Adjust this endpoint as needed
-        console.log(response);
+        // console.log(response);
         setAdminUser(response.data); // Assuming response.data is an array of users
       } catch (error) {
         console.error('Error fetching users:', error);

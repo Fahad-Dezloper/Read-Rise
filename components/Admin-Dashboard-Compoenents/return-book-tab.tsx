@@ -20,7 +20,7 @@ const LendReturn = async (memberID) => {
       throw new Error('Failed to fetch data of user lend books')
     }
     const data = await response.json()
-    console.log('User Lend Books: ', data)
+    // console.log('User Lend Books: ', data)
     return data
   } catch (error) {
     console.log(error)
@@ -43,7 +43,7 @@ const UpdateBook = async (isbn) => {
       throw new Error('Book not found');
     }
     const LendReturnbook = await response.json();
-    console.log("I am return book details update: ", LendReturnbook)
+    // console.log("I am return book details update: ", LendReturnbook)
     return LendReturnbook;
   } catch (error) {
     alert("error fetching book data", error)
@@ -65,7 +65,7 @@ const handleReturnBook = async (lendBookId, userId) => {
     }
 
     const updatedUser = await response.json();
-    console.log('Updated User after return:', updatedUser);
+    // console.log('Updated User after return:', updatedUser);
 
     // Update the UI after the book is returned (e.g., re-fetch the lendBooks data)
     // Call a function to refresh the lendBooks list or remove the returned book from the state.
@@ -82,7 +82,7 @@ const SaleReturn = async (memberID) => {
       throw new Error('Failed to fetch data of user lend books')
     }
     const data = await response.json()
-    console.log('User Purchased Books: ', data)
+    // console.log('User Purchased Books: ', data)
     return data
   } catch (error) {
     console.log(error)
@@ -104,7 +104,7 @@ const handlePurchaseReturnBook = async (purchaseBookId, userId) => {
     }
 
     const updatedUser = await response.json();
-    console.log('Updated User after return:', updatedUser);
+    // console.log('Updated User after return:', updatedUser);
 
     // Update the UI after the book is returned (e.g., re-fetch the lendBooks data)
     // Call a function to refresh the lendBooks list or remove the returned book from the state.
@@ -130,13 +130,13 @@ export function ReturnBookTabComponent() {
     const fetchUsers = async () => {
       try {
         const response = await fetch('/queries/UsersLendBooks'); 
-        console.log(response);
+        // console.log(response);
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
         const data = await response.json();
         setUser(data);
-        console.log("lend user:- ", user);
+        // console.log("lend user:- ", user);
         // setLoading(false);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -157,11 +157,11 @@ export function ReturnBookTabComponent() {
 
   // update return book on user and lend books model
   const handleLendReturnButton = async (ISBN, userId, bookId) => {
-    console.log(ISBN, userId, bookId)
+    // console.log(ISBN, userId, bookId)
     const bookUpdate = await UpdateBook(ISBN);
     const userUpdate = await handleReturnBook(bookId, userId)
-    console.log("book updated successfully");
-    alert("book updated successfully")
+    // console.log("book updated successfully");
+    // alert("book updated successfully")
   }
 
 
@@ -170,17 +170,17 @@ export function ReturnBookTabComponent() {
     const response = await SaleReturn(memberId);
     // console.log(`response of data: ${response}`)
      setSaleBooks(response)
-     console.log(saleBooks)
+    //  console.log(saleBooks)
     // alert(`Book returned successfully!`)
    }
   
   // update return book on user and purchase books model
     const handleSaleReturnButton = async (ISBN, userId, bookId) => {
-    console.log(ISBN, userId, bookId)
+    // console.log(ISBN, userId, bookId)
     const bookUpdate = await UpdateBook(ISBN);
     const userUpdate = await handlePurchaseReturnBook(bookId, userId)
-    console.log("book updated successfully");
-    alert("book updated successfully")
+    // console.log("book updated successfully");
+    // alert("book updated successfully")
   }
 
   return (

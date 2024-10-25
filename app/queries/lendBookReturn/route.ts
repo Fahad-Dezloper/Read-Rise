@@ -9,7 +9,7 @@ export async function PUT(req: Request) {
         const { searchParams } = new URL(req.url);
         const ISBN = searchParams.get('isbn');
 
-        console.log("request received for ISBN: ", ISBN);
+        // console.log("request received for ISBN: ", ISBN);
 
         if (!ISBN) {
             return NextResponse.json({ error: 'ISBN is required' }, { status: 400 });
@@ -35,7 +35,7 @@ export async function PUT(req: Request) {
             },
         });
 
-        console.log("Updated book quantity:", updatedBook);
+        // console.log("Updated book quantity:", updatedBook);
         return NextResponse.json(updatedBook);
 
     } catch (error) {

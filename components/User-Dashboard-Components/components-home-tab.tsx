@@ -36,7 +36,22 @@ export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
   if (!user) {
     return <p>Loading user details...</p>;
   }
-  console.log("i am user", user)
+
+    function formatLendDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const year = date.getFullYear();
+
+    // Determine the suffix for the day
+    const suffix = (day % 10 === 1 && day !== 11) ? "st" :
+                   (day % 10 === 2 && day !== 12) ? "nd" :
+                   (day % 10 === 3 && day !== 13) ? "rd" : "th";
+
+    return `${day}${suffix} ${month}, ${year}`;
+}
+
+  // console.log("i am user", user)
   return (
     <Card>
       <CardHeader>
@@ -71,17 +86,17 @@ export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-2">Books Lent</h3>
+            <h3 className="text-lg font-semibold mb-2">Books Lend</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(lentBooks || []).slice(0, 3).map((book) => (
-                <Card key={book.id}>
+              {user.lendBooks.map((lendBook) => (
+                 <Card key={lendBook.id}>
                   <CardContent className="flex items-center space-x-4 p-4">
-                    <Image src={book.image} alt={book.name} width={60} height={80} className="object-cover" />
+                    {/* <Image src={book.image} alt={book.name} width={60} height={80} className="object-cover" /> */}
                     <div>
-                      <p className="font-medium">{book.name}</p>
+                      <p className="font-medium">{lendBook.bookName}</p>
                       <p className="text-sm text-gray-500 flex items-center">
                         <CalendarIcon className="mr-1 h-4 w-4" />
-                        Return by: {book.returnDate}
+                        Return by: {formatLendDate(lendBook.lendEndDate)}
                       </p>
                     </div>
                   </CardContent>

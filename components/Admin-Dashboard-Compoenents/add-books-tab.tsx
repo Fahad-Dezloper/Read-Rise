@@ -74,7 +74,7 @@ export function AddBooksTabComponent() {
       })
 
       const aiAnswer = await response.json();
-      console.log(aiAnswer)
+      // console.log(aiAnswer)
       setBookDescription(aiAnswer.reply);
       if (response.ok) {
         setBookDescription(aiAnswer.reply);
@@ -152,8 +152,8 @@ const handleSubmit = async (e) => {
     }
 
     const result = await response.json();
-    console.log("Book added successfully:", result);
-    alert("Book added successfully!");
+    // console.log("Book added successfully:", result);
+    // alert("Book added successfully!");
 
     setIsbn("");
     setBookName("");

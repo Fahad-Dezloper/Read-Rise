@@ -19,7 +19,7 @@ const fetchBookDetails = async (isbn) => {
       throw new Error('Book not found');
     }
     const book = await response.json();
-    console.log(book)
+    // console.log(book)
     return book;
   } catch (error) {
     console.log("error fetching book data", error)
@@ -41,7 +41,7 @@ const handleIsbnlendBook = async (isbn, quantity) => {
       throw new Error('Book not found');
     }
     const Lendbook = await response.json();
-    console.log("I am lend book details update: ", Lendbook)
+    // console.log("I am lend book details update: ", Lendbook)
     return Lendbook;
   } catch (error) {
     console.log("error fetching book data", error)
@@ -63,7 +63,7 @@ const addLendIsbntoUser = async (isbn, memberId, lendDays) => {
       throw new Error('User not found');
     }
     const Lenduser = await response.json();
-    console.log("I am Lend User Details", Lenduser)
+    // console.log("I am Lend User Details", Lenduser)
     return Lenduser;
   } catch (error) {
     console.log("Error Updating User", error)
@@ -85,7 +85,7 @@ const UserSaleModelUpdate = async (isbn, memberId, price, paymentMethod) => {
       throw new Error('User not found');
     }
     const PurchaseUser = await response.json();
-    console.log("I am purchase User Details", PurchaseUser)
+    // console.log("I am purchase User Details", PurchaseUser)
     return PurchaseUser;
   } catch (error) {
     console.log("Error Updating User", error)
@@ -110,7 +110,7 @@ export function SaleTabComponent() {
     if (isbn) {
       const details = await fetchBookDetails(isbn)
       setBookDetails(details)
-      console.log("Hi i am book details", details)
+      // console.log("Hi i am book details", details)
     }
   }
 

@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 // get user based on member id who have Bought books for return tab
 export async function GET(req: Request) {
-    console.log("fetching users lend books for return")
+    // console.log("fetching users lend books for return")
     try {
         const { searchParams } = new URL(req.url);
 
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
             purchasedBooks: true,
         },
       });
-        console.log(users)
+        // console.log(users)
     return NextResponse.json(users);  
     } catch (error) {
         console.log("error fetching user data", error)
