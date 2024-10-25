@@ -10,8 +10,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { useAdmin } from '@/app/AdminContext'; // Import the custom hook
-import { AdminUser } from '@/shared/usertypes'; // Import your types
+import { useAdmin } from '@/app/AdminContext';
+import { AdminUser } from '@/shared/usertypes';
 import axios from "axios"
 
 export function UsersTabComponent() {

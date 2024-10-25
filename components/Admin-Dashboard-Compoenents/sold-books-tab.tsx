@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,16 +8,39 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useAdmin } from '@/app/AdminContext';
+import axios from 'axios';
 
 export function SoldBooksTabComponent() {
   const [selectedSoldBook, setSelectedSoldBook] = useState(null)
+  const [purchasedBooks, setPurchasedBooks] = useState(null)
 
-  // Mock data for sold books
-  const soldBooks = [
-    { id: 1, isbn: "1234567890", memberId: "M001", paymentMethod: "Cash", date: "2023-06-01" },
-    { id: 2, isbn: "0987654321", memberId: "M002", paymentMethod: "UPI", date: "2023-06-02" },
-    { id: 3, isbn: "1357924680", memberId: "M003", paymentMethod: "Card", date: "2023-06-03" },
-  ]
+   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('/queries/allPurchasedBooks'); 
+        console.log(response);
+        setPurchasedBooks(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchUsers();
+  }, [setPurchasedBooks]);
+
+  function formatLendDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const year = date.getFullYear();
+
+    // Determine the suffix for the day
+    const suffix = (day % 10 === 1 && day !== 11) ? "st" :
+                   (day % 10 === 2 && day !== 12) ? "nd" :
+                   (day % 10 === 3 && day !== 13) ? "rd" : "th";
+
+    return `${day}${suffix} ${month}, ${year}`;
+}
 
   return (
     <Card className="md:rounded-lg rounded-none">
@@ -62,12 +85,12 @@ export function SoldBooksTabComponent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {soldBooks.map((book) => (
+              {purchasedBooks?.map((book) => (
                 <TableRow key={book.id}>
-                  <TableCell className="md:table-cell hidden">{book.isbn}</TableCell>
-                  <TableCell>{book.memberId}</TableCell>
-                  <TableCell>{book.paymentMethod}</TableCell>
-                  <TableCell className="md:table-cell hidden">{book.date}</TableCell>
+                  <TableCell className="md:table-cell hidden">{book.bookIsbn}</TableCell>
+                  <TableCell>{book.user.memberID}</TableCell>
+                  <TableCell>{book.purchaseMethod}</TableCell>
+                  <TableCell className="md:table-cell hidden">{formatLendDate(book.purchaseDate)}</TableCell>
                   <TableCell>
                     <Dialog>
                       <DialogTrigger asChild>
@@ -81,10 +104,10 @@ export function SoldBooksTabComponent() {
                         </DialogHeader>
                         {selectedSoldBook && (
                           <div className="space-y-4">
-                            <p><strong>ISBN:</strong> {selectedSoldBook.isbn}</p>
-                            <p><strong>Member ID:</strong> {selectedSoldBook.memberId}</p>
-                            <p><strong>Payment Method:</strong> {selectedSoldBook.paymentMethod}</p>
-                            <p><strong>Date:</strong> {selectedSoldBook.date}</p>
+                            <p><strong>ISBN:</strong> {selectedSoldBook.bookIsbn}</p>
+                            <p><strong>Member ID:</strong> {selectedSoldBook.user.memberID}</p>
+                            <p><strong>Payment Method:</strong> {selectedSoldBook.purchaseMethod}</p>
+                            <p><strong>Date:</strong> {formatLendDate(selectedSoldBook.purchaseDate)}</p>
                           </div>
                         )}
                       </DialogContent>

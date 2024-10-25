@@ -85,6 +85,7 @@ model Book{
   Author      String
   Description String
   Quantity    Int
+  Price       Int
   createdAt   DateTime @default(now())
 }
 

@@ -16,6 +16,7 @@ export function AddBooksTabComponent() {
   const [bookAuthor, setBookAuthor] = useState("")
   const [bookDescription, setBookDescription] = useState("")
   const [bookQuantity, setQuantity] = useState("")
+  const [bookPrice, setBookPrice] = useState("")
   const [images, setImages] = useState<File[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -78,10 +79,10 @@ export function AddBooksTabComponent() {
       setBookDescription(aiAnswer.reply);
       if (response.ok) {
         setBookDescription(aiAnswer.reply);
-      // alert(aiAnswer?.reply);
-    } else {
-      alert(`Error: ${aiAnswer?.error}`);
-    }
+        // alert(aiAnswer?.reply);
+      } else {
+        alert(`Error: ${aiAnswer?.error}`);
+      }
     } catch (error) {
       console.log(error)
     } finally {
@@ -89,42 +90,10 @@ export function AddBooksTabComponent() {
     }
   }
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-    
-  //   if (!isbn ||!bookName ||!bookDescription ||!bookAuthor ||!bookQuantity) {
-  //     alert("All fields are required.");
-  //     return;
-  //   }
-  //     const bookData = {
-  //       ISBN: isbn,
-  //       BookName: bookName,
-  //       Author: bookAuthor,
-  //       Description: bookDescription,
-  //       Quantity: bookQuantity,
-  //   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  //   try {
-  //       const response = await axios.post('https://api.sheetbest.com/sheets/d5b080a8-0c21-44d8-8e17-f32f4f970fbf', bookData);
-  //       console.log(response.data);
-  //       alert("Book added successfully!");
-        
-  //       setIsbn("");
-  //       setBookName("");
-  //       setBookAuthor("");
-  //       setBookDescription("");
-  //       setQuantity("");
-  //       setImages([]);
-  //   } catch (error) {
-  //       console.error("Error adding book:", error);
-  //       alert("There was an error adding the book.");
-  //   }
-  // };
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity) {
+    if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity || !bookPrice) {
     alert("All fields are required.");
     return;
   }
@@ -135,6 +104,8 @@ const handleSubmit = async (e) => {
     Author: bookAuthor,
     Description: bookDescription,
     Quantity: parseInt(bookQuantity),
+    Price: parseFloat(bookPrice),
+    // Image: images[0], // Save the first image as a Blob
     // ImageUrls: images.map(image => URL.createObjectURL(image)), // Save URLs of the images
   };
 
@@ -160,6 +131,7 @@ const handleSubmit = async (e) => {
     setBookAuthor("");
     setBookDescription("");
     setQuantity("");
+    setBookPrice("");
     setImages([]);
   } catch (error) {
     console.error("Error adding book:", error);
@@ -197,7 +169,7 @@ const handleSubmit = async (e) => {
               />
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="author">Book Author</Label>
               <Input
@@ -215,6 +187,16 @@ const handleSubmit = async (e) => {
                 placeholder="Enter Quantity"
                 value={bookQuantity}
                 onChange={(e) => setQuantity(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Book Price</Label>
+              <Input
+                id="price"
+                placeholder="Enter Book Price"
+                value={bookPrice}
+                onChange={(e) => setBookPrice(e.target.value)}
                 required
               />
             </div>

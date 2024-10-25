@@ -14,6 +14,7 @@ export async function POST(req: Request) {
         Author: body.Author,
         Description: body.Description,
         Quantity: parseInt(body.Quantity),
+        Price: parseInt(body.Price),
       },
     });
 
@@ -48,6 +49,6 @@ export async function GET(req: Request) {
 
     return new Response(JSON.stringify(book), { status: 200 });
     } catch (error) {
-        // console.log("Error fetching Books: ", error);
+        console.log("Error fetching Books: ", error);
     }
 }

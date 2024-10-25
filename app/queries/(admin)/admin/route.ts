@@ -1,16 +1,18 @@
 // app/api/users/route.ts
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import email from 'next-auth/providers/email';
 
 const prisma = new PrismaClient();
 
 // GET ALL USERS
-// GET ALL USERS
 export async function GET() {
   try {
     const users = await prisma.user.findMany({
-      include: { subscription: true },
+      include: {
+        subscription: true,
+        purchasedBooks: true,
+        lendBooks : true,
+      },
     });
     return NextResponse.json(users);
   } catch (error) {
