@@ -13,7 +13,7 @@ export async function GET(req: Request) {
             lendBooks: true,
         },
       });
-        // console.log(users)
+        console.log(users)
     return NextResponse.json(users);  
     } catch (error) {
         console.log("error fetching user data", error)

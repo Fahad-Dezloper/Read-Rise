@@ -92,7 +92,7 @@ export function AddBooksTabComponent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsSubmitting(true);
     if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity || !bookPrice) {
     alert("All fields are required.");
     return;
@@ -122,10 +122,14 @@ export function AddBooksTabComponent() {
       throw new Error("Error adding book");
     }
 
-    const result = await response.json();
-    // console.log("Book added successfully:", result);
+    try {
+      const result = await response.json();
+      console.log("Book added successfully:", result);
+      setIsSubmitting(false);
+    } catch (err) {
+      console.log(err)
+    }
     // alert("Book added successfully!");
-
     setIsbn("");
     setBookName("");
     setBookAuthor("");
@@ -253,7 +257,7 @@ export function AddBooksTabComponent() {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="bookDescription">Book Description</Label>
-              <Button type="button" onClick={() => generateDiscription()}>
+              <Button type="button" disabled={isSubmitting == true} onClick={() => generateDiscription()}>
                 {isSubmitting ? <><Loader2Icon className="mr-2 h-4 w-4 animate-spin" />Fetching</> : 'Fetch Description'}
               </Button>
             </div>
@@ -265,7 +269,7 @@ export function AddBooksTabComponent() {
               rows={4}
             />
           </div>
-          <Button type="submit" className="w-full">Add Book</Button>
+          <Button type="submit" className="w-full" disabled={isSubmitting == true}>{isSubmitting ? 'Adding' : 'Add Book'}</Button>
         </form>
       </CardContent>
     </Card>

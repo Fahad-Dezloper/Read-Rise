@@ -8,12 +8,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { useAdmin } from '@/app/AdminContext';
 import axios from 'axios';
+import * as XLSX from 'xlsx'; // Import the xlsx library
 
 export function SoldBooksTabComponent() {
   const [selectedSoldBook, setSelectedSoldBook] = useState(null)
   const [purchasedBooks, setPurchasedBooks] = useState(null)
+  const [paymentMethod, setPaymentMethod] = useState("all")
+  const [dateFilter, setDateFilter] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
 
    useEffect(() => {
     const fetchUsers = async () => {
@@ -33,14 +36,38 @@ export function SoldBooksTabComponent() {
     const day = date.getDate();
     const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
     const year = date.getFullYear();
-
-    // Determine the suffix for the day
     const suffix = (day % 10 === 1 && day !== 11) ? "st" :
                    (day % 10 === 2 && day !== 12) ? "nd" :
                    (day % 10 === 3 && day !== 13) ? "rd" : "th";
 
     return `${day}${suffix} ${month}, ${year}`;
 }
+
+    // filters
+  const filteredBooks = (purchasedBooks || []).filter(book => {
+    const matchesPaymentMethod = paymentMethod === "all" || book.purchaseMethod.toLowerCase() === paymentMethod.toLowerCase();
+    const matchesDate = !dateFilter || new Date(book.purchaseDate).toISOString().split("T")[0] === dateFilter;
+    const matchesSearchTerm = 
+      (!searchTerm || 
+      book.bookIsbn.toString().includes(searchTerm) || 
+      book.user.memberID.toString().includes(searchTerm));
+
+    return matchesPaymentMethod && matchesDate && matchesSearchTerm;
+  });
+
+// Function to download filtered books as Excel
+  const downloadExcel = () => {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(filteredBooks.map(book => ({
+      ISBN: book.bookIsbn,
+      MemberID: book.user.memberID,
+      PaymentMethod: book.purchaseMethod,
+      Date: formatLendDate(book.purchaseDate)
+    }))); 
+
+    XLSX.utils.book_append_sheet(wb, ws, "Sold Books"); 
+    XLSX.writeFile(wb, "sold_books.xlsx"); 
+  };
 
   return (
     <Card className="md:rounded-lg rounded-none">
@@ -52,8 +79,10 @@ export function SoldBooksTabComponent() {
           <Input
             placeholder="Search by ISBN or Member ID"
             className="flex-grow"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Select>
+          <Select value={paymentMethod}  onValueChange={setPaymentMethod}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Payment Method" />
             </SelectTrigger>
@@ -66,9 +95,11 @@ export function SoldBooksTabComponent() {
           </Select>
           <Input
             type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
             className="w-full sm:w-[180px]"
           />
-          <Button className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto" onClick={downloadExcel}>
             <Download className="mr-2 h-4 w-4" />
             Download Excel
           </Button>
@@ -85,7 +116,7 @@ export function SoldBooksTabComponent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {purchasedBooks?.map((book) => (
+              {filteredBooks?.map((book) => (
                 <TableRow key={book.id}>
                   <TableCell className="md:table-cell hidden">{book.bookIsbn}</TableCell>
                   <TableCell>{book.user.memberID}</TableCell>

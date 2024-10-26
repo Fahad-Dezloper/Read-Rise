@@ -25,9 +25,9 @@ export function UsersTabComponent() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/queries/admin'); // Adjust this endpoint as needed
+        const response = await axios.get('/queries/admin');
         // console.log(response);
-        setAdminUser(response.data); // Assuming response.data is an array of users
+        setAdminUser(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -35,33 +35,29 @@ export function UsersTabComponent() {
     fetchUsers();
   }, [setAdminUser]);
 
-  // Mock data for users
-  const users = [
-    { id: 1, name: "John Doe", email: "john@example.com", phone: "123-456-7890", plan: "Basic", booksLent: 2, memberID: "M001" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", phone: "987-654-3210", plan: "Premium", booksLent: 0, memberID: "M002" },
-    { id: 3, name: "Alice Johnson", email: "alice@example.com", phone: "456-789-0123", plan: "Bronze", booksLent: 1, memberID: "M003" },
-  ]
+const filteredUsers = (adminUser || []).filter((user) => {
+  const matchesSearch = 
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (user.phoneNumber && user.phoneNumber.includes(searchQuery)) ||
+    user.memberID.toLowerCase().includes(searchQuery.toLowerCase());
+  const matchesUserFilter = userFilter === "all" || 
+                            (userFilter === "expiry" && user.plan !== "Basic") ||
+                            (userFilter === "lent" && user.booksLent > 0);
+  const matchesPlanFilter = planFilter === "all" || user.subscription.planType.toLowerCase() === planFilter.toLowerCase();
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          user.email.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesUserFilter = userFilter === "all" || 
-                              (userFilter === "expiry" && user.plan !== "Basic") ||
-                              (userFilter === "lent" && user.booksLent > 0)
-    const matchesPlanFilter = planFilter === "all" || user.plan.toLowerCase() === planFilter.toLowerCase()
+  return matchesSearch && matchesUserFilter && matchesPlanFilter;
+});
 
-    return matchesSearch && matchesUserFilter && matchesPlanFilter
-  })
+  // const handleUpdateUser = (userId, newPlan) => {
+  //   // Update user logic here
+  //   alert("User updated successfully")
+  // }
 
-  const handleUpdateUser = (userId, newPlan) => {
-    // Update user logic here
-    alert("User updated successfully")
-  }
-
-  const handleDeleteUser = (userId) => {
-    // Delete user logic here
-    alert("User deleted successfully")
-  }
+  // const handleDeleteUser = (userId) => {
+  //   // Delete user logic here
+  //   alert("User deleted successfully")
+  // }
 
   return (
     <Card className="md:rounded-lg rounded-none">
@@ -100,21 +96,20 @@ export function UsersTabComponent() {
               <SelectContent>
                 <SelectItem value="all">All Users</SelectItem>
                 <SelectItem value="expiry">Subscription Expiry</SelectItem>
-                <SelectItem value="lent">Books Lent</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="hidden md:block">
             <Tabs value={userFilter} onValueChange={setUserFilter}>
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="all">All Users</TabsTrigger>
                 <TabsTrigger value="expiry">Subscription Expiry</TabsTrigger>
-                <TabsTrigger value="lent">Books Lent</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
         </div>
         <div className="overflow-x-auto mt-4">
+        {adminUser && adminUser.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
@@ -127,7 +122,7 @@ export function UsersTabComponent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {adminUser ? adminUser.map((user: AdminUser) => (
+              {filteredUsers.map((user: AdminUser) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell className="md:table-cell hidden">{user.email}</TableCell>
@@ -155,7 +150,7 @@ export function UsersTabComponent() {
                               <strong>Subscription Plan:</strong>
                               <Select
                                 value={selectedUser.plan}
-                                onValueChange={(value) => setSelectedUser({...selectedUser, plan: value})}
+                                onValueChange={(value) => setSelectedUser({ ...selectedUser, plan: value })}
                               >
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Select plan" />
@@ -200,12 +195,13 @@ export function UsersTabComponent() {
                     </Dialog>
                   </TableCell>
                 </TableRow>
-              )): (
-                  <div>Your data is loading</div>
-              )}
+              ))}
             </TableBody>
           </Table>
-        </div>
+        ) : (
+        <p>Your data is loading...</p>
+      )}
+</div>
       </CardContent>
     </Card>
   )

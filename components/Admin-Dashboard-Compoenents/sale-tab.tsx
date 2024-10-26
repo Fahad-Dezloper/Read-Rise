@@ -107,10 +107,11 @@ export function SaleTabComponent() {
 
   // Lend
   const handleIsbnSubmit = async () => {
+    setLoading(true);
     if (isbn) {
       const details = await fetchBookDetails(isbn)
       setBookDetails(details)
-      // console.log("Hi i am book details", details)
+      setLoading(false);
     }
   }
 
@@ -145,7 +146,8 @@ export function SaleTabComponent() {
   }
 
   // Sale
-   const handleSaleBook = async () => {
+  const handleSaleBook = async () => {
+     setLoading(true)
     try {
       if (!bookDetails || !memberId || !paymentMethod || !price) {
         alert('MEMBER ID & Payment Method & Price is required');
@@ -157,6 +159,7 @@ export function SaleTabComponent() {
         const updateBookqt = await handleIsbnlendBook(isbn, quantity);
         const userUpdate = await UserSaleModelUpdate(isbn, memberId, price, paymentMethod);
 
+        setLoading(false);
         // Reset states after successful operation
         setIsbn("");
         setMemberId("");
@@ -190,10 +193,10 @@ export function SaleTabComponent() {
                 value={isbn}
                 onChange={(e) => setIsbn(e.target.value)}
               />
-              <Button onClick={handleIsbnSubmit}>Submit</Button>
+              <Button onClick={handleIsbnSubmit} disabled={loading == true}>{loading ? 'Fetching Details' : 'Submit'}</Button>
             </div>
           </div>
-          {bookDetails && (
+          {bookDetails ? (
             <div className="grid md:grid-cols-2 gap-6">
               <div className="flex gap-4 mt-12">
                 <Image
@@ -264,7 +267,7 @@ export function SaleTabComponent() {
                         onChange={(e) => setQuantity(e.target.value)}
                       />
                     </div>
-                    <Button onClick={handleLendBook}>{ loading ? 'Lending' : 'Lend'}</Button>
+                    <Button onClick={handleLendBook} disabled={loading == true}>{ loading ? 'Lending' : 'Lend'}</Button>
                   </div>
                 )}
 
@@ -312,12 +315,12 @@ export function SaleTabComponent() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button onClick={() => handleSaleBook()}>{loading ? 'Selling' : 'Sale'}</Button>
+                    <Button onClick={() => handleSaleBook()} disabled={loading == true}>{loading ? 'Selling' : 'Sale'}</Button>
                   </div>
                 )}
               </div>
             </div>
-          )}
+          ) : "Book Not Found"}
         </div>
       </CardContent>
     </Card>

@@ -114,6 +114,29 @@ const handlePurchaseReturnBook = async (purchaseBookId, userId) => {
 };
 
 
+// Filters
+const getUpcomingReturns = (books) => {
+  const today = new Date();
+  return books.filter(book => {
+    const dueDate = new Date(book.lendEndDate);
+    const daysLeft = (dueDate - today) / (1000 * 60 * 60 * 24); // calculate days difference
+    return daysLeft >= 0 && daysLeft <= 7; // due within the next 7 days
+  });
+};
+
+const getOverdueReturns = (books) => {
+  const today = new Date();
+  return books.filter(book => {
+    const dueDate = new Date(book.lendEndDate);
+    return dueDate < today; // past due date
+  });
+};
+
+const sortBooksByDueDate = (books) => {
+  return books.sort((a, b) => new Date(a.lendEndDate) - new Date(b.lendEndDate));
+};
+
+
 
 export function ReturnBookTabComponent() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -181,8 +204,47 @@ export function ReturnBookTabComponent() {
     const userUpdate = await handlePurchaseReturnBook(bookId, userId)
     // console.log("book updated successfully");
     // alert("book updated successfully")
-  }
+    }
+  
+  // format date
+  
+   function formatLendDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const year = date.getFullYear();
 
+    const suffix = (day % 10 === 1 && day !== 11) ? "st" :
+                   (day % 10 === 2 && day !== 12) ? "nd" :
+                   (day % 10 === 3 && day !== 13) ? "rd" : "th";
+
+    return `${day}${suffix} ${month}, ${year}`;
+}
+
+  // filtering function
+const filteredLendBooks = () => {
+  if (!user) return [];
+  
+  const books = user.flatMap(u => 
+    u.lendBooks.map(book => ({
+      ...book,
+      memberID: u.memberID, // Attach memberID to each book
+    }))
+  );
+
+  const sortedBooks = sortBooksByDueDate(books);
+
+  switch (filterType) {
+    case "upcoming":
+      return getUpcomingReturns(sortedBooks);
+    case "overdue":
+      return getOverdueReturns(sortedBooks);
+    default:
+      return sortedBooks;
+  }
+};
+
+  
   return (
     <Card className="md:rounded-lg rounded-none">
       <CardHeader>
@@ -331,24 +393,16 @@ export function ReturnBookTabComponent() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {user?.map((user) => (
-                  user.lendBooks.map((book) => (
+                {filteredLendBooks().map(book => (
                     <TableRow key={book.id}>
-                    <TableCell>{user.memberID}</TableCell>
+                    <TableCell>{book.memberID}</TableCell>
+                    {/* <TableCell>123456</TableCell> */}
                     <TableCell>{book.bookName}</TableCell>
                     <TableCell className="hidden md:table-cell">{book.bookIsbn}</TableCell>
-                      <TableCell>3 days</TableCell>
+                      <TableCell>{formatLendDate(book.lendEndDate)}</TableCell>
                     {/* <TableCell>${calculateLateFee(user.dueDate)}</TableCell> */}
                   </TableRow>  
-                  ))
                 ))}
-                  {/* <TableRow key={user.id}>
-                    <TableCell>{user.memberID}</TableCell>
-                    <TableCell>{user.LendBooks.bookName}</TableCell>
-                    <TableCell className="hidden md:table-cell">{user.isbn}</TableCell>
-                    <TableCell>{user.dueDate}</TableCell>
-                    <TableCell>${calculateLateFee(user.dueDate)}</TableCell>
-                  </TableRow> */}
               </TableBody>
             </Table>
           </div>
