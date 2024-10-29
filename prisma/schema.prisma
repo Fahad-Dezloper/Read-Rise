@@ -18,7 +18,7 @@ model User {
   phoneNumber    String?
   subscription   Subscription?
   lendBooks      LendBook[]      @relation("UserLendBooks")
-  purchasedBooks PurchsedBook[]  @relation("UserPurchasedBooks")
+  purchasedBooks PurchasedBook[]  @relation("UserPurchasedBooks")
   accounts       Account[]
   sessions       Session[]
   Authenticator  Authenticator[]
@@ -45,7 +45,7 @@ model LendBook {
   book        Book     @relation("BookLendBooks", fields: [bookId], references: [id])
   bookName    String
   bookAuthor  String
-  bookIsbn    String
+  bookIsbn    Int
   lendDate    DateTime
   lendDays    Int
   lendEndDate DateTime
@@ -53,14 +53,14 @@ model LendBook {
   user        User     @relation("UserLendBooks", fields: [userId], references: [id])
 }
 
-model PurchsedBook {
+model PurchasedBook {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   userId         String   @db.ObjectId
   bookId         String   @db.ObjectId
   book           Book     @relation("BookPurchasedBooks", fields: [bookId], references: [id])
   bookName       String
   bookAuthor     String
-  bookIsbn       String
+  bookIsbn       Int
   purchaseDate   DateTime
   purchaseMethod String
   amount         Int
@@ -82,7 +82,7 @@ enum SubscriptionStatus {
 
 model Book {
   id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  ISBN           String         @unique
+  ISBN           Int         @unique
   BookName       String
   Author         String
   Description    String
@@ -90,9 +90,9 @@ model Book {
   Quantity       Int
   Price          Int?
   createdAt      DateTime       @default(now())
-  // Opposite relations to LendBook and PurchsedBook
+  // Opposite relations to LendBook and PurchasedBook
   lendBooks      LendBook[]     @relation("BookLendBooks") // Added relation
-  purchasedBooks PurchsedBook[] @relation("BookPurchasedBooks")
+  purchasedBooks PurchasedBook[] @relation("BookPurchasedBooks")
 }
 
 model Image {

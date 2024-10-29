@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     // console.log("imagedata", imagesData)
     const newBook = await prisma.book.create({
       data: {
-        ISBN: body.ISBN,
+        ISBN: parseInt(body.ISBN, 10),
         BookName: body.BookName,
         Author: body.Author,
         Description: body.Description,
@@ -40,8 +40,9 @@ export async function GET(req: Request) {
     // console.log("fetching data")
     try {
         const { searchParams } = new URL(req.url);
-        const ISBN = searchParams.get('isbn');
-        // console.log("fetching data of isbn", ISBN)
+        const isbnString = searchParams.get('isbn');
+      // console.log("fetching data of isbn", ISBN)
+      const ISBN = parseInt(isbnString, 10);
     if (!ISBN) {
       return new Response(JSON.stringify({ error: 'ISBN is required' }), { status: 400 });
         }

@@ -98,7 +98,7 @@ const handleSubmit = async (e) => {
 
   if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity || !bookPrice) {
     alert("All fields are required.");
-    setIsSubmitting(false); // Reset submitting state
+    setIsSubmitting(false);
     return;
   }
 

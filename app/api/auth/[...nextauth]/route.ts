@@ -2,11 +2,7 @@ import prisma from '@/lib/prisma';
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import NextAuth, { AuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-
-
-const generateRandomDigits = () => {
-    return Math.floor(10000 + Math.random() * 90000).toString();
-}
+import { v4 as uuidv4 } from 'uuid';
 
 export const authOptions: AuthOptions = {
     session: {
@@ -18,11 +14,8 @@ export const authOptions: AuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             profile(profile) {
-                const firstName = profile.given_name.toLowerCase();
-                const localPart = profile.email.split('@')[0];
-                const lastFourChars = localPart.slice(-4);
 
-                const memberID = `${firstName}@${lastFourChars}${generateRandomDigits()}`;
+                const memberID = `BOOKIE/${uuidv4().slice(0, 5).toUpperCase()}`;
                 return ({
                     id: profile.sub,
                     name: `${profile.given_name} ${profile.family_name}`,

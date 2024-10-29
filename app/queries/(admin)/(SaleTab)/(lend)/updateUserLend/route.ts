@@ -8,7 +8,7 @@ export async function PUT(req: Request) {
     // console.log("updating lend data to user");
     try {
         const { searchParams } = new URL(req.url);
-        const ISBN = searchParams.get('isbn');
+        const ISBN = Number(searchParams.get('isbn'));
         const memberID = searchParams.get('memberId');
         const lendDays = Number(searchParams.get('lendDays'));
         // console.log("request recived of : ", ISBN, memberID, lendDays)

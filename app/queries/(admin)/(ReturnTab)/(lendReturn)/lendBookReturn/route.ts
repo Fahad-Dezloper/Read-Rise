@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function PUT(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
-        const ISBN = searchParams.get('isbn');
+        const ISBN = Number(searchParams.get('isbn'));
 
         // console.log("request received for ISBN: ", ISBN);
 

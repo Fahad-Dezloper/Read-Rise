@@ -8,7 +8,7 @@ export async function PUT(req: Request) {
     console.log("updating user purchase data to user");
     try {
         const { searchParams } = new URL(req.url);
-        const ISBN = searchParams.get('isbn');
+        const ISBN = Number(searchParams.get('isbn'));
         const memberID = searchParams.get('memberId');
         const price = Number(searchParams.get('price'));
         const paymentMethod = searchParams.get('paymentMethod');
@@ -26,7 +26,7 @@ export async function PUT(req: Request) {
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
 
-        const newPurchaseBook = await prisma.purchsedBook.create({
+        const newPurchaseBook = await prisma.purchasedBook.create({
             data: {
                 bookId: bookDetails.id,
                 bookName: bookDetails.BookName, 

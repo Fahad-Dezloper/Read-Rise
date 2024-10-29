@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-      const purchasedBooks = await prisma.purchsedBook.findMany({
+      const purchasedBooks = await prisma.purchasedBook.findMany({
           include: {
               user: {
                   select: {

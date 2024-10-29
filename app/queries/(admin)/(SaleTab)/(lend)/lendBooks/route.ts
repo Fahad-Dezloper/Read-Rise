@@ -8,7 +8,7 @@ export async function PUT(req: Request) {
     // console.log("fetching lend data");
     try {
         const { searchParams } = new URL(req.url);
-        const ISBN = searchParams.get('isbn');
+        const ISBN = Number(searchParams.get('isbn'));
         const Quantity = Number(searchParams.get('quantity'));
         // console.log("request recived of book: ", ISBN, Quantity);
         if (!ISBN || !Quantity) {
