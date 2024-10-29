@@ -9,8 +9,10 @@ import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import React from "react"
 import { Loader2, Loader2Icon, X } from 'lucide-react'
-import axios from 'axios'
 export function AddBooksTabComponent() {
+  const CLOUDINARY_CLOUD_NAME="dmatteqxe"
+  const UPLOAD_PRESET = "R2_book_image"
+  
   const [isbn, setIsbn] = useState("")
   const [bookName, setBookName] = useState("")
   const [bookAuthor, setBookAuthor] = useState("")
@@ -90,26 +92,50 @@ export function AddBooksTabComponent() {
     }
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity || !bookPrice) {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  if (!isbn || !bookName || !bookDescription || !bookAuthor || !bookQuantity || !bookPrice) {
     alert("All fields are required.");
+    setIsSubmitting(false); // Reset submitting state
     return;
   }
 
-  const bookData = {
-    ISBN: isbn,
-    BookName: bookName,
-    Author: bookAuthor,
-    Description: bookDescription,
-    Quantity: parseInt(bookQuantity),
-    Price: parseFloat(bookPrice),
-    // Image: images[0], // Save the first image as a Blob
-    // ImageUrls: images.map(image => URL.createObjectURL(image)), // Save URLs of the images
-  };
-
   try {
+    // Upload images and retrieve their URLs
+    const uploadedImages = await Promise.all(images.map(async (image) => {
+      const formData = new FormData();
+      formData.append('file', image);
+      formData.append('upload_preset', UPLOAD_PRESET);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      return {
+        id: data["public_id"],
+        url: data["secure_url"]
+      };
+    }));
+
+    // Extract URLs from the uploaded images
+    const imageUrls = uploadedImages.map(img => img.url);
+
+    // Prepare book data to be sent to MongoDB
+    const bookData = {
+      ISBN: isbn,
+      BookName: bookName,
+      Author: bookAuthor,
+      Description: bookDescription,
+      Quantity: parseInt(bookQuantity),
+      Price: parseFloat(bookPrice),
+      Images: imageUrls,
+    };
+
+    // Send book data to your API endpoint
     const response = await fetch('/queries/books', {
       method: 'POST',
       headers: {
@@ -122,14 +148,11 @@ export function AddBooksTabComponent() {
       throw new Error("Error adding book");
     }
 
-    try {
-      const result = await response.json();
-      console.log("Book added successfully:", result);
-      setIsSubmitting(false);
-    } catch (err) {
-      console.log(err)
-    }
-    // alert("Book added successfully!");
+    const result = await response.json();
+    console.log("Book added successfully:", result);
+    alert("Book added successfully!");
+
+    // Reset form fields after successful submission
     setIsbn("");
     setBookName("");
     setBookAuthor("");
@@ -140,7 +163,31 @@ export function AddBooksTabComponent() {
   } catch (error) {
     console.error("Error adding book:", error);
     alert("There was an error adding the book.");
+  } finally {
+    setIsSubmitting(false); // Reset submitting state
   }
+};
+
+
+  const uploadImages = async () => {
+  const uploadedImages = await Promise.all(images.map(async (image) => {
+    const formData = new FormData();
+    formData.append('file', image);
+    formData.append('upload_preset', UPLOAD_PRESET);
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    return {
+      id: data["public_id"],
+      url: data["secure_url"]
+    };
+  }));
+
+  return uploadedImages;
 };
 
   

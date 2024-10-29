@@ -200,14 +200,14 @@ export function SaleTabComponent() {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="flex gap-4 mt-12">
                 <Image
-                  src="https://www.midlandbookshop.com/s/607fe93d7eafcac1f2c73ea4/66c87b4b34d8b8015500eb60/81qftkssitl-_sy425_-640x640.jpg"
-                  alt="book Title"
+                  src={bookDetails.Images[0].url}
+                  alt={bookDetails.BookName}
                   width={150}
                   height={150}
                   className="rounded-md h-fit"
                 />
-                <div>
-                  <h3 className="text-lg font-semibold">{bookDetails.BookName}</h3>
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-lg font-semibold font-inter">{bookDetails.BookName}</h3>
                   <p>Author: {bookDetails.Author}</p>
                   <p>ISBN: {bookDetails.ISBN}</p>
                   <p>Quantity: {bookDetails.Quantity}</p>

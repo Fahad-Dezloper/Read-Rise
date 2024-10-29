@@ -5,6 +5,7 @@ import { CalendarIcon  } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useUser } from "@/app/UserContext"
+import placeholder from '@/assets/placeholder.png'
 
 interface Book {
   id: number;
@@ -22,7 +23,7 @@ interface BooksTabProps {
   boughtBooks: Book[];
 }
 
-export function BooksTab({ lentBooks, boughtBooks }: BooksTabProps) {
+export function BooksTab({ lendBooks, boughtBooks }: BooksTabProps) {
   
   function formatLendDate(dateString) {
     const date = new Date(dateString);
@@ -40,9 +41,9 @@ export function BooksTab({ lentBooks, boughtBooks }: BooksTabProps) {
 
   const { user } = useUser();
   if (!user) {
-    return <p>Loading User Books details...</p>;
+    return <p>Loading User lend Books details...</p>;
   }
-  console.log(user);
+  console.log("Hi i am user details", user);
   return (
     <Card>
       <CardHeader>
@@ -59,7 +60,13 @@ export function BooksTab({ lentBooks, boughtBooks }: BooksTabProps) {
                   <DialogTrigger asChild>
                     <Card className="cursor-pointer hover:bg-gray-100 transition-colors h-fit">
                       <CardContent className="flex items-center space-x-4 p-4">
-                        {/* <Image src={book.image} alt={book.name} width={60} height={80} className="object-cover" /> */}
+                         <Image
+                            src={lendBook.book.Images[0]?.url || placeholder}
+                            alt={lendBook.bookName}
+                            width={60}
+                            height={80}
+                            className="object-cover"
+                          />
                         <div>
                           <p className="font-medium">{lendBook.bookName}</p>
                           <p className="text-sm text-gray-500">ISBN: {lendBook.bookIsbn}</p>
@@ -96,7 +103,13 @@ export function BooksTab({ lentBooks, boughtBooks }: BooksTabProps) {
                   <DialogTrigger asChild>
                     <Card className="cursor-pointer hover:bg-gray-100 transition-colors h-fit">
                       <CardContent className="flex items-center space-x-4 p-4">
-                        {/* <Image src={purchasedBook.image} alt={purchasedBook.bookName} width={60} height={80} className="object-cover" /> */}
+                         <Image
+                            src={purchasedBook.book.Images[0]?.url || placeholder}
+                            alt={purchasedBook.bookName}
+                            width={60}
+                            height={80}
+                            className="object-cover"
+                          />
                         <div>
                           <p className="font-medium">{purchasedBook.bookName}</p>
                           <p className="text-sm text-gray-500">ISBN: {purchasedBook.bookIsbn}</p>

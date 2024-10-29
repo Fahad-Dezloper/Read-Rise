@@ -17,15 +17,30 @@ export async function GET(req: Request) {
   const user = await prisma.user.findUnique({
     where: { email },
     include: {
-      purchasedBooks: true,
-      lendBooks: true
-    }
+      purchasedBooks: {
+        include: {
+        book: {
+          include: {
+            Images: true,
+          },
+        },
+      },
+      },
+      lendBooks: {
+        include: {
+          book: {
+            include: {
+              Images: true,
+            },
+          },
+      },
+      },
+    },
   });
 
   if (!user) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
-
   return NextResponse.json(user);
 }
 

@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {useUser} from "@/app/UserContext"
+import placeholder from '@/assets/placeholder.png'
 
 interface HomeTabProps {
   lentBooks?: Array<{
@@ -91,7 +92,13 @@ export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
               {user.lendBooks.map((lendBook) => (
                  <Card key={lendBook.id}>
                   <CardContent className="flex items-center space-x-4 p-4">
-                    {/* <Image src={book.image} alt={book.name} width={60} height={80} className="object-cover" /> */}
+                    <Image
+                            src={lendBook.book.Images[0]?.url || placeholder}
+                            alt={lendBook.bookName}
+                            width={60}
+                            height={80}
+                            className="object-cover"
+                          />
                     <div>
                       <p className="font-medium">{lendBook.bookName}</p>
                       <p className="text-sm text-gray-500 flex items-center">
