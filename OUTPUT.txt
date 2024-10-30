@@ -1,11 +1,10 @@
-Create a new repository and then start working on it
+resolve all bugs
 
 
 admin panel
 --> when fetching book data show loading if availanle in dot colored [red, green, orange]
---> delete book
 --> when click on return loading button and update it
---> in sale tab dont have to add price should be fetched on its own
+--> sale tab add 2 features of discount and price like if mrp is 699 sold it 499 it automatically calculates the percenatage given off to the customer or how much money discount is given.
 --> make loading component for the tabs and button when processing
 --> shadcn alert
 ---> user tab subscription expiry filter

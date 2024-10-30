@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -101,7 +101,7 @@ export function SaleTabComponent() {
   const [saleType, setSaleType] = useState("")
   const [bookDetails, setBookDetails] = useState(null)
   const [quantity, setQuantity] = useState(1)
-  const [price, setPrice] = useState()
+  const [price, setPrice] = useState(bookDetails ? bookDetails.Price : '')
 
   const [loading, setLoading] = useState(false)
 
@@ -144,6 +144,13 @@ export function SaleTabComponent() {
       setLoading(false);
     }
   }
+
+  // price
+  useEffect(() => {
+  if (bookDetails) {
+    setPrice(bookDetails.Price);
+  }
+}, [bookDetails]);
 
   // Sale
   const handleSaleBook = async () => {
