@@ -82,11 +82,11 @@ enum SubscriptionStatus {
 
 model Book {
   id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  ISBN           Int         @unique
+  ISBN           Int            @unique
   BookName       String
   Author         String
   Description    String
-  Images         Image[]
+  Images         Image[]       
   Quantity       Int
   Price          Int?
   createdAt      DateTime       @default(now())
@@ -99,7 +99,7 @@ model Image {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   url    String // URL of the image
   bookId String @db.ObjectId
-  book   Book   @relation(fields: [bookId], references: [id])
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
 }
 
 model Account {

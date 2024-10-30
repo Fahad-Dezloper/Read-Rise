@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import React from "react"
 import { Loader2, Loader2Icon, X } from 'lucide-react'
+import placeholder from '@/assets/placeholder.png'
 export function AddBooksTabComponent() {
   const CLOUDINARY_CLOUD_NAME="dmatteqxe"
   const UPLOAD_PRESET = "R2_book_image"
@@ -20,9 +21,35 @@ export function AddBooksTabComponent() {
   const [bookQuantity, setQuantity] = useState("")
   const [bookPrice, setBookPrice] = useState("")
   const [images, setImages] = useState<File[]>([])
+  const [prevImages, setPrevImages] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [bookExists, setBookExists] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // book delete button function
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/queries/books?isbn=${isbn}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Error deleting book');
+      }
+
+      const result = await response.json();
+      console.log("Book deleted successfully:", result);
+      resetForm();
+      alert("Book deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting book:", error);
+      alert("There was an error deleting the book.");
+    }
+  }
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setImages(prevImages => [...prevImages, ...Array.from(e.target.files as FileList)])
@@ -136,8 +163,8 @@ const handleSubmit = async (e) => {
     };
 
     // Send book data to your API endpoint
-    const response = await fetch('/queries/books', {
-      method: 'POST',
+    const response = await fetch(bookExists ? `/queries/books?isbn=${isbn}` : '/queries/books', {
+      method: bookExists ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -153,13 +180,7 @@ const handleSubmit = async (e) => {
     alert("Book added successfully!");
 
     // Reset form fields after successful submission
-    setIsbn("");
-    setBookName("");
-    setBookAuthor("");
-    setBookDescription("");
-    setQuantity("");
-    setBookPrice("");
-    setImages([]);
+    resetForm();
   } catch (error) {
     console.error("Error adding book:", error);
     alert("There was an error adding the book.");
@@ -167,7 +188,6 @@ const handleSubmit = async (e) => {
     setIsSubmitting(false); // Reset submitting state
   }
 };
-
 
   const uploadImages = async () => {
   const uploadedImages = await Promise.all(images.map(async (image) => {
@@ -190,6 +210,54 @@ const handleSubmit = async (e) => {
   return uploadedImages;
 };
 
+ const fetchBookDetails = async (isbn: string) => {
+    try {
+      const response = await fetch(`/queries/books?isbn=${isbn}`); // Modify this to your API endpoint
+      if (!response.ok) throw new Error("Book not found");
+
+      const bookData = await response.json();
+      // Set the state with book details
+      setBookName(bookData.BookName);
+      setBookAuthor(bookData.Author);
+      setBookDescription(bookData.Description);
+      setQuantity(bookData.Quantity);
+      setBookPrice(bookData.Price);
+      setPrevImages(bookData.Images); // Assuming you store image URLs in your database
+      setBookExists(true); // Set bookExists to true if book is found
+    } catch (error) {
+      console.error("Error fetching book details:", error);
+      setBookExists(false); // If there's an error, set bookExists to false
+    }
+ };
+  
+    useEffect(() => {
+    if (isbn) {
+      fetchBookDetails(isbn); 
+    } else {
+      // Reset fields if ISBN is cleared
+      setBookName("");
+      setBookAuthor("");
+      setBookDescription("");
+      setQuantity("");
+      setBookPrice("");
+      setImages([]);
+      setPrevImages([]);
+      setBookExists(false);
+    }
+  }, [isbn]);
+
+
+  // reset form
+  const resetForm = () => {
+    setIsbn("");
+    setBookName("");
+    setBookAuthor("");
+    setBookDescription("");
+    setQuantity("");
+    setBookPrice("");
+    setImages([]);
+    setBookExists(false);
+   };
   
   return (
     <Card className="md:rounded-lg rounded-none">
@@ -298,7 +366,17 @@ const handleSubmit = async (e) => {
             </div>
           ))}
         </div>
-      )}
+            )}
+            <div className="flex gap-2">
+           {bookExists && (
+              prevImages.map((images) => {
+                return (
+                  <Image src={images.url ? images.url : placeholder} alt="previmage" key={images.id} height={110} width={110} />
+                );
+              })
+              )}
+              </div>
+
           </div>
 
           <div className="space-y-2">
@@ -316,7 +394,16 @@ const handleSubmit = async (e) => {
               rows={4}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting == true}>{isSubmitting ? 'Adding' : 'Add Book'}</Button>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : bookExists ? "Update Book" : "Add Book"}
+          </Button>
+          {bookExists && (
+            <div className="flex justify-between">
+              <Button onClick={handleDelete} type="button" className="w-full bg-red-500 hover:bg-red-600">
+                Delete Book
+              </Button>
+            </div>
+          )}
         </form>
       </CardContent>
     </Card>

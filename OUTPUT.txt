@@ -1,9 +1,11 @@
+Create a new repository and then start working on it
+
+
 admin panel
---> in book model make ISBN Number and make it unique figure when and how the book can updated
+--> when fetching book data show loading if availanle in dot colored [red, green, orange]
+--> delete book
 --> when click on return loading button and update it
---> in sale tab dont have to add isbn should be fetched on its own
---> Same Book Copy is being created when add the book with same ISBN
---> Book Update method
+--> in sale tab dont have to add price should be fetched on its own
 --> make loading component for the tabs and button when processing
 --> shadcn alert
 ---> user tab subscription expiry filter
