@@ -5,10 +5,10 @@ import { authOptions } from '@/app/utils/authOptions';
 
 const page = async () => {
   const session = await getServerSession(authOptions);
-  const userEmail = session?.user.email; 
+  const userEmail = session?.user.email;
   return (
       <div>
-          <UserDashboardMain email = {userEmail} />
+           {userEmail ? <UserDashboardMain email={userEmail} /> : <p>Loading...</p>}
     </div>
   )
 }
