@@ -42,7 +42,7 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const isbnString = searchParams.get('isbn');
       // console.log("fetching data of isbn", ISBN)
-      const ISBN = parseInt(isbnString, 10);
+      const ISBN = isbnString ? parseInt(isbnString, 10) : NaN;;
     if (!ISBN) {
       return new Response(JSON.stringify({ error: 'ISBN is required' }), { status: 400 });
         }
