@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import React from "react"
-import { Loader2, Loader2Icon, X } from 'lucide-react'
+import { Loader2Icon, X } from 'lucide-react'
 import placeholder from '@/assets/placeholder.png'
 export function AddBooksTabComponent() {
   const CLOUDINARY_CLOUD_NAME="dmatteqxe"

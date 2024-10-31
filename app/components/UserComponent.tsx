@@ -24,7 +24,8 @@ const UserComponent: React.FC<UserComponentProps> = ({ email }) => {
         const response = await axios.get(`/queries/user?email=${email}`);
         setUser(response.data);
       } catch (err) {
-        setError('Error fetching user data', err);
+        console.log(err);
+        setError('Error fetching user data');
       }
     };
 

@@ -19,6 +19,7 @@ const AdminComponent: React.FC = () => {
         const response = await axios.get('/queries/admin');
         setUsers(response.data);
       } catch (err) {
+        console.log(err);
         setError('Error fetching users');
       }
     };

@@ -1,5 +1,6 @@
-resolve all bugs
+[work on deployment just finish deployment with new repo and then do all other bugs resolve]
 
+resolve all bugs
 
 admin panel
 --> when fetching book data show loading if availanle in dot colored [red, green, orange]
@@ -15,7 +16,7 @@ user dashboard
 
 most important thing clean the code file by file once finished working
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 date function

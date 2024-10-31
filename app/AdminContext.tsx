@@ -1,11 +1,10 @@
-// AdminContext.tsx
-"use client"
+"use client";
 import React, { createContext, useContext, useState } from 'react';
-import { AdminUser } from '@/shared/usertypes'; // Adjust the import based on your file structure
+import { AdminUser } from '@/shared/usertypes';
 
 interface AdminContextType {
-  adminUser: AdminUser[];
-  setAdminUser: React.Dispatch<React.SetStateAction<AdminUser[]>>;
+  adminUser: AdminUser | null;
+  setAdminUser: React.Dispatch<React.SetStateAction<AdminUser | null>>;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
