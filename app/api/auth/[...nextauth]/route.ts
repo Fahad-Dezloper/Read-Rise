@@ -1,13 +1,14 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from '@/lib/prisma';
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import NextAuth, { AuthOptions } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import NextAuth, { AuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 import { v4 as uuidv4 } from 'uuid';
+import types from '@/lib/next-auth'
 
 export const authOptions: AuthOptions = {
     session: {
-        strategy: 'jwt'
+        strategy: 'jwt',
     },
     adapter: PrismaAdapter(prisma),
     providers: [
@@ -15,37 +16,41 @@ export const authOptions: AuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             profile(profile) {
-
                 const memberID = `BOOKIE/${uuidv4().slice(0, 5).toUpperCase()}`;
-                return ({
+                return {
                     id: profile.sub,
                     name: `${profile.given_name} ${profile.family_name}`,
                     email: profile.email,
                     image: profile.picture,
                     memberID,
-                    role: profile.email == "fahad.khan2216@gmail.com" ? "admin" : "user",
+                    role: profile.email === 'fahad.khan2216@gmail.com' ? 'admin' : 'user',
                     subscription: {
                         create: {
-                        planType: 'BASIC',
-                        status: 'ACTIVE',
-                        startDate: new Date(),
-                        endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+                            planType: 'BASIC',
+                            status: 'ACTIVE',
+                            startDate: new Date(),
+                            endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
                         },
                     },
-                })
-            }
-        })
+                };
+            },
+        }),
     ],
     callbacks: {
-        async jwt({token, user}) {
-            return {...token, ...user};
+        async jwt({ token, user }) {
+            if (user) {
+                token.role = user.role; // Ensure token has user role
+            }
+            return token;
         },
         async session({ session, token }) {
-            session.user.role = token.role;
+            if (token) {
+                session.user.role = token.role; // Attach role to session
+            }
             return session;
-        }
-    }
-}
+        },
+    },
+};
 
 const handler = NextAuth(authOptions);
 
