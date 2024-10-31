@@ -2,7 +2,7 @@ import React from "react";
 import SigninButton from "./SigninButton";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/utils/authOptions";
 
 const Appbar = async () => {
 const session = await getServerSession(authOptions);
