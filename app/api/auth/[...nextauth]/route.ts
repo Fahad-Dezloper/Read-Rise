@@ -1,4 +1,5 @@
 // app/api/auth/[...nextauth]/route.ts
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from '@/lib/prisma';
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { AuthOptions } from 'next-auth';
