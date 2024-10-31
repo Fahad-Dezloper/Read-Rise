@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { AuthOptions } from "next-auth";
 import GoogleProvider from 'next-auth/providers/google'
 import { v4 as uuidv4 } from 'uuid';
+import { JWT } from "next-auth/jwt";
+import { Session } from "next-auth";
 
-export const authOptions: AuthOptions = {
+export const authOptions = {
     session: {
         strategy: 'jwt'
     },
@@ -36,12 +38,17 @@ export const authOptions: AuthOptions = {
         })
     ],
     callbacks: {
+        // @ts-expect-error
         async jwt({token, user}) {
             return {...token, ...user};
         },
-        async session({ session, token }) {
-            session.user.role = token.role;
+        async session({ session, token }: { session: Session; token: JWT }) {
+            if (token.role) {
+                session.user.role = token.role;
+            }
             return session;
         }
     }
+
+
 }
