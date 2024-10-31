@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         Quantity: parseInt(body.Quantity),
         Price: parseInt(body.Price),
         Images: {
-          create: imagesData.map((url) => ({
+          create: imagesData.map((url : string) => ({
             url,
           })),
         },
@@ -75,7 +75,7 @@ export async function PUT(req: Request) {
 
     console.log("Updating data of ISBN", isbnString);
     
-    const ISBN = parseInt(isbnString, 10);
+    const ISBN = isbnString ? parseInt(isbnString, 10) : NaN;
     if (!ISBN) {
       return new Response(JSON.stringify({ error: 'ISBN is required' }), { status: 400 });
     }
@@ -95,7 +95,7 @@ export async function PUT(req: Request) {
         Quantity: parseInt(body.Quantity),
         Price: parseInt(body.Price),
         Images: {
-          create: imagesData.map((url) => ({
+          create: imagesData.map((url : string) => ({
             url,
           })),
         },
