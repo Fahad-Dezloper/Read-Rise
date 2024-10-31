@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { User } from "@prisma/client";
 import NextAuth from "next-auth";
 import { JWT } from 'next-auth/jwt'

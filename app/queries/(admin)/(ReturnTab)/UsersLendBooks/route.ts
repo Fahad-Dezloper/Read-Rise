@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 // Get All User who have lend books from the store
 
-export async function GET(req: Request) {
+export async function GET() {
     try {
       const users = await prisma.user.findMany({
         include: {

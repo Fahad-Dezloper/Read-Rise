@@ -25,7 +25,7 @@ export async function PUT(req: Request) {
         // console.log("updated book quantity", updateBookQuan)
         return NextResponse.json(updateBookQuan)
     } catch (error) {
-        // console.log("Error Lending Book", error)
+        console.log("Error Lending Book", error)
          return NextResponse.json({ error: 'Error lending book' }, { status: 500 });
     }
 

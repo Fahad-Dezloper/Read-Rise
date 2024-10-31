@@ -22,7 +22,8 @@ export const POST = async (request: Request) => {
 
     return NextResponse.json({ reply });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message });
-  }
+  } catch (error) {
+  console.error(error); // Log the error for debugging
+  return NextResponse.json({ error: "error getting description" });
+}
 };

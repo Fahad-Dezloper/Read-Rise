@@ -189,6 +189,7 @@ const handleSubmit = async (e) => {
   }
 };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const uploadImages = async () => {
   const uploadedImages = await Promise.all(images.map(async (image) => {
     const formData = new FormData();

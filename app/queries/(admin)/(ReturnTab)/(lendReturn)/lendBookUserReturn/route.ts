@@ -2,7 +2,6 @@
 
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { ObjectId } from 'mongodb';  // This helps handle MongoDB ObjectIds
 
 const prisma = new PrismaClient();
 

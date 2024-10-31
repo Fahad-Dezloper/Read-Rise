@@ -177,7 +177,7 @@ const filteredUsers = (adminUser || []).filter((user) => {
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      This action cannot be undone. This will permanently delete the user's account and remove their data from our servers.
+                                      This action cannot be undone. This will permanently delete the user&apos;s account and remove their data from our servers.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
