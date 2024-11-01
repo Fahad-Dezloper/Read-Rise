@@ -19,14 +19,47 @@ interface Book {
   author: string;
 }
 
-interface BooksTabProps {
-  lentBooks: Book[];
-  boughtBooks: Book[];
+// Define the structure of a Lent Book
+interface LendBook {
+  id: number;
+  bookName: string;
+  bookIsbn: string;
+  lendDate: string; // date when the book was lent
+  lendEndDate: string; // return date
+  book: {
+    Images: Array<{
+      url: string; // URL of the book image
+    }>
+  };
+  bookAuthor: string; // author of the lent book
 }
 
-export function BooksTab({ lendBooks, boughtBooks }: BooksTabProps) {
+// Define the structure of a Purchased Book
+interface PurchasedBook {
+  id: number;
+  bookName: string;
+  bookIsbn: string;
+  purchaseDate: string; // date when the book was bought
+  book: {
+    Images: Array<{
+      url: string; // URL of the book image
+    }>
+  };
+  bookAuthor: string; // author of the purchased book
+}
+
+// Define the structure of the User
+interface User {
+  id: number; // Assuming there's an ID for the user
+  name: string; // User's name
+  lendBooks: LendBook[]; // Array of lent books
+  purchasedBooks: PurchasedBook[]; // Array of purchased books
+}
+
+
+export function BooksTab() {
   
-  function formatLendDate(dateString) {
+  function formatLendDate(dateString: string | number | Date) {
     const date = new Date(dateString);
     const day = date.getDate();
     const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
@@ -56,7 +89,7 @@ export function BooksTab({ lendBooks, boughtBooks }: BooksTabProps) {
           <div>
             <h3 className="text-lg font-semibold mb-2">Books Lent</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-h-[20.3vw] overflow-y-auto">
-              {user.lendBooks?.map((lendBook) => (
+              {user.lendBooks?.map((lendBook: LendBook) => (
                 <Dialog key={lendBook.id}>
                   <DialogTrigger asChild>
                     <Card className="cursor-pointer hover:bg-gray-100 transition-colors h-fit">
@@ -99,7 +132,7 @@ export function BooksTab({ lendBooks, boughtBooks }: BooksTabProps) {
           <div>
             <h3 className="text-lg font-semibold mb-2">Books Bought</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full h-[20.3vw] overflow-y-auto">
-              {user.purchasedBooks?.map((purchasedBook) => (
+              {user.purchasedBooks?.map((purchasedBook: PurchasedBook) => (
                 <Dialog key={purchasedBook.id}>
                   <DialogTrigger asChild>
                     <Card className="cursor-pointer hover:bg-gray-100 transition-colors h-fit">

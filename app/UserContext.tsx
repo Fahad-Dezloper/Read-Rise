@@ -1,8 +1,11 @@
 // UserContext.tsx
 "use client"
+import { LendBook, PurchasedBook } from '@prisma/client';
 import React, { createContext, useContext, useState } from 'react';
 
 interface User {
+  purchasedBooks: any;
+  lendBooks: any;
   name: string;
   email: string;
   memberID?: string;
