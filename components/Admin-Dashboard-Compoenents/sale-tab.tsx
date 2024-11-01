@@ -9,11 +9,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 
-
+interface BookImage {
+  url: string; // Assuming the structure of BookImage
+}
+interface BookDetails {
+  ISBN: string; // ISBN of the book
+  BookName: string; // Name of the book
+  Author: string; // Author of the book
+  Quantity: number; // Available quantity of the book
+  Price: number; // Price of the book
+  Images: BookImage[]; // Array of images associated with the book
+}
 
 // Lend
 // fetch book details from the API
-const fetchBookDetails = async (isbn) => {
+const fetchBookDetails = async (isbn: string) => {
   try {
     const response = await fetch(`/queries/books?isbn=${isbn}`)
     if (!response.ok) {
@@ -27,7 +37,7 @@ const fetchBookDetails = async (isbn) => {
   }
 }
 // reduce the book quantity
-const handleIsbnlendBook = async (isbn, quantity) => { 
+const handleIsbnlendBook = async (isbn: string, quantity: number) => { 
   // alert(`Lend Book ISBN is: ${isbn}`);
      try {
        const response = await fetch(`/queries/lendBooks?isbn=${isbn}&quantity=${Number(quantity)}`, {
@@ -49,7 +59,7 @@ const handleIsbnlendBook = async (isbn, quantity) => {
   }
 } 
 // Add the ISBN to the user lend books array
-const addLendIsbntoUser = async (isbn, memberId, lendDays) => {
+const addLendIsbntoUser = async (isbn: string, memberId: string, lendDays: string) => {
   // alert(`Update User Lend Books with ISBN: ${isbn}`)
 
   try {
@@ -73,7 +83,8 @@ const addLendIsbntoUser = async (isbn, memberId, lendDays) => {
 
 // Sale
 // Add the ISBN to the user Purchase Books Array
-const UserSaleModelUpdate = async (isbn, memberId, price, paymentMethod) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const UserSaleModelUpdate = async (isbn: string, memberId: string, price: any, paymentMethod: string) => {
   try {
     const response = await fetch(`/queries/updateUserPurchase?isbn=${isbn}&memberId=${memberId}&price=${Number(price)}&paymentMethod=${paymentMethod}`, {
       method: 'PUT',
@@ -100,7 +111,7 @@ export function SaleTabComponent() {
   const [lendDays, setLendDays] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("")
   const [saleType, setSaleType] = useState("")
-  const [bookDetails, setBookDetails] = useState(null)
+  const [bookDetails, setBookDetails] = useState<BookDetails | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [price, setPrice] = useState(bookDetails ? bookDetails.Price : '')
 
@@ -172,8 +183,8 @@ export function SaleTabComponent() {
         setIsbn("");
         setMemberId("");
         setQuantity(1);
-        setPrice(null);
-        setPaymentMethod(null);
+        setPrice("");
+        setPaymentMethod("");
         setBookDetails(null);
       } else {
         alert('ISBN is required');
@@ -272,7 +283,7 @@ export function SaleTabComponent() {
                         type="number"
                         placeholder="Quantity"
                         value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
+                        onChange={(e) => setQuantity(Number(e.target.value))}
                       />
                     </div>
                     <Button onClick={handleLendBook} disabled={loading == true}>{ loading ? 'Lending' : 'Lend'}</Button>
@@ -297,7 +308,7 @@ export function SaleTabComponent() {
                         type="number"
                         placeholder="Quantity"
                         value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
+                        onChange={(e) => setQuantity(Number(e.target.value))}
                       />
                     </div>
                     <div className="space-y-2">
