@@ -14,7 +14,7 @@ interface Subscription{
     startDate: Date;
     endDate: Date;
 }
-interface user {
+interface User {
   subscription: Subscription | null;
 }
 
@@ -45,7 +45,12 @@ export function SubscriptionsTab() {
               <CardContent className="flex justify-between items-center p-4">
                 <div>
                   <p className="font-medium">{user.subscription?.planType || 'No active subscription'}</p>
-                  <p className="text-sm text-gray-500">Valid until: {new Date(user.subscription?.endDate).toLocaleDateString() || 'N/A'}</p>
+                  <p className="text-sm text-gray-500">
+                    Valid until:
+                    {user.subscription?.endDate
+                      ? new Date(user.subscription.endDate).toLocaleDateString()
+                      : 'N/A'}
+                  </p>
                 </div>
                 <Badge variant="secondary">{user.subscription?.status}</Badge>
               </CardContent>
