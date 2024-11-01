@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
@@ -39,16 +40,22 @@ export const authOptions: NextAuthOptions = {
         })
     ],
     callbacks: {
-        async jwt({token, user}) {
-            return {...token, ...user};
-        },
-        async session({ session, token }: { session: Session; token: JWT }) {
-            if (token.role) {
-                session.user.role = token.role;
-            }
-            return session;
+    async jwt({ token, user }) {
+        if (user) {
+            console.log("User:", user);
+            token = { ...token, ...user }; // Merge user data into token
         }
+        return token;
+    },
+    async session({ session, token }) {
+        console.log("Token:", token);
+        if (token.role) {
+            session.user.role = token.role;
+        }
+        return session;
     }
+}
+
 
 
 }
