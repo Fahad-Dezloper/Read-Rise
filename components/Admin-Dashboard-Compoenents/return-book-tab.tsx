@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars*/
 "use client"
 
 import { useEffect, useState } from "react"
@@ -11,10 +11,23 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
+interface Book {
+  bookId: string;
+  bookName: string;
+  bookIsbn: number;
+  lendEndDate: string;
+  lendDate: string;
+  userId: string;
+  id: string;
+  purchaseDate: string;
+  purchaseMethod: string;
+  amount: number;
+}
+
 
 // Lend
 // fetch user lend books
-const LendReturn = async (memberID) => {
+const LendReturn = async (memberID: string) => {
   try {
     const response = await fetch(`/queries/fetchUserLendBooks?memberID=${memberID}`)
     if (!response.ok) {
@@ -29,7 +42,7 @@ const LendReturn = async (memberID) => {
 }
 
 // update the book quantity to return
-const UpdateBook = async (isbn) => { 
+const UpdateBook = async (isbn: number) => { 
   // alert(`Lend Book ISBN is: ${isbn}`);
      try {
        const response = await fetch(`/queries/lendBookReturn?isbn=${isbn}`, {
@@ -46,13 +59,15 @@ const UpdateBook = async (isbn) => {
     const LendReturnbook = await response.json();
     // console.log("I am return book details update: ", LendReturnbook)
     return LendReturnbook;
-  } catch (error) {
-    alert("error fetching book data", error)
+     } catch (error) {
+       console.log(error)
+    alert("error fetching book data")
   }
 }
 
 // update user lend book model
-const handleReturnBook = async (lendBookId, userId) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleReturnBook = async (lendBookId: any, userId: any) => {
   try {
     const response = await fetch(`/queries/UsersLendBooks?userId=${userId}&lendBookId=${lendBookId}`, {
       method: 'DELETE',
@@ -76,7 +91,7 @@ const handleReturnBook = async (lendBookId, userId) => {
 };
 
 // Sale
-const SaleReturn = async (memberID) => {
+const SaleReturn = async (memberID: string) => {
   try {
     const response = await fetch(`/queries/fetchUserPurchasedBooks?memberID=${memberID}`)
     if (!response.ok) {
@@ -91,7 +106,8 @@ const SaleReturn = async (memberID) => {
 }
 
 // update user lend book model
-const handlePurchaseReturnBook = async (purchaseBookId, userId) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handlePurchaseReturnBook = async (purchaseBookId: any, userId: any) => {
   try {
     const response = await fetch(`/queries/UsersPurchaseBooksReturn?userId=${userId}&purchaseBookId=${purchaseBookId}`, {
       method: 'DELETE',
@@ -116,16 +132,18 @@ const handlePurchaseReturnBook = async (purchaseBookId, userId) => {
 
 
 // Filters
-const getUpcomingReturns = (books) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getUpcomingReturns = (books: any[]) => {
   const today = new Date();
   return books.filter(book => {
     const dueDate = new Date(book.lendEndDate);
-    const daysLeft = (dueDate - today) / (1000 * 60 * 60 * 24); // calculate days difference
+    const daysLeft = (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24); // calculate days difference
     return daysLeft >= 0 && daysLeft <= 7; // due within the next 7 days
   });
 };
 
-const getOverdueReturns = (books) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getOverdueReturns = (books: any[]) => {
   const today = new Date();
   return books.filter(book => {
     const dueDate = new Date(book.lendEndDate);
@@ -133,9 +151,17 @@ const getOverdueReturns = (books) => {
   });
 };
 
-const sortBooksByDueDate = (books) => {
-  return books.sort((a, b) => new Date(a.lendEndDate) - new Date(b.lendEndDate));
+
+// Filters
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sortBooksByDueDate = (books: any[]) => {
+  return books.sort((a, b) => {
+    const dateA = new Date(a.lendEndDate);
+    const dateB = new Date(b.lendEndDate);
+    return dateA.getTime() - dateB.getTime();
+  });
 };
+
 
 
 
@@ -180,7 +206,8 @@ export function ReturnBookTabComponent() {
   }
 
   // update return book on user and lend books model
-  const handleLendReturnButton = async (ISBN, userId, bookId) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleLendReturnButton = async (ISBN: number, userId: any, bookId: any) => {
     // console.log(ISBN, userId, bookId)
     const bookUpdate = await UpdateBook(ISBN);
     const userUpdate = await handleReturnBook(bookId, userId)
@@ -199,7 +226,8 @@ export function ReturnBookTabComponent() {
    }
   
   // update return book on user and purchase books model
-    const handleSaleReturnButton = async (ISBN, userId, bookId) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleSaleReturnButton = async (ISBN: number, userId: any, bookId: any) => {
     // console.log(ISBN, userId, bookId)
     const bookUpdate = await UpdateBook(ISBN);
     const userUpdate = await handlePurchaseReturnBook(bookId, userId)
@@ -208,8 +236,7 @@ export function ReturnBookTabComponent() {
     }
   
   // format date
-  
-   function formatLendDate(dateString) {
+   function formatLendDate(dateString: string | number | Date) {
     const date = new Date(dateString);
     const day = date.getDate();
     const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
@@ -225,11 +252,11 @@ export function ReturnBookTabComponent() {
   // filtering function
 const filteredLendBooks = () => {
   if (!user) return [];
-  
   const books = user.flatMap(u => 
-    u.lendBooks.map(book => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    u.lendBooks.map((book: any) => ({
       ...book,
-      memberID: u.memberID, // Attach memberID to each book
+      memberID: u.memberID,
     }))
   );
 
@@ -292,7 +319,7 @@ const filteredLendBooks = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {lendBooks.lendBooks?.map((book) => (
+                          {lendBooks.lendBooks?.map((book: Book) => (
                             <TableRow key={book.bookId}>
                               <TableCell>{book.bookName}</TableCell>
                               <TableCell>{book.bookIsbn}</TableCell>
@@ -341,7 +368,7 @@ const filteredLendBooks = () => {
                         </TableHeader>
                         {/* onClick={() => handleReturn()} */}
                         <TableBody>
-                          {saleBooks.purchasedBooks.map((book) => (
+                          {saleBooks.purchasedBooks.map((book: Book) => (
                             <TableRow key={book.id}>
                               <TableCell>{book.bookName}</TableCell>
                               <TableCell>{book.bookIsbn}</TableCell>
