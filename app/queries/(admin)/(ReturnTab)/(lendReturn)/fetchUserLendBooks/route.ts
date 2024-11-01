@@ -1,4 +1,5 @@
 // app/api/UsersLendBooks/route.ts
+export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client';
 
