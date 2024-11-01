@@ -8,6 +8,7 @@ export interface User {
 
 // types.ts
 export interface AdminUser {
+  length: number;
   filter: any;
   id: string;
   name: string;
