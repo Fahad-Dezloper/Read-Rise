@@ -5,8 +5,9 @@ import GoogleProvider from 'next-auth/providers/google'
 import { v4 as uuidv4 } from 'uuid';
 import { JWT } from "next-auth/jwt";
 import { Session } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
     session: {
         strategy: 'jwt'
     },
@@ -38,7 +39,6 @@ export const authOptions = {
         })
     ],
     callbacks: {
-        // @ts-expect-error
         async jwt({token, user}) {
             return {...token, ...user};
         },
