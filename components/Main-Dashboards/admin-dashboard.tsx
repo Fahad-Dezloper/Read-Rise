@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, Sidebar } from "lucide-react"
+import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { SidebarComponent } from "../Admin-Dashboard-Compoenents/sidebar"
@@ -27,7 +27,7 @@ export function AdminDashboard() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
-          <Sidebar setActiveTab={setActiveTab} />
+          <SidebarComponent setActiveTab={setActiveTab} />
         </SheetContent>
       </Sheet>
 

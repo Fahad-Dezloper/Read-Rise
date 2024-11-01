@@ -76,13 +76,6 @@ export function UserDashboardMain({ email }: UserComponentProps) {
     { id: 10, name: "The Alchemist", isbn: "9780062315007", image: "https://m.media-amazon.com/images/I/416JeZoF8tL._SY445_SX342_.jpg?height=80&width=60", boughtOn: "2023-06-25", author: "Paulo Coelho" },
   ]
 
-  const activeSubscription = { id: 1, name: "Premium Plan", validity: "2023-12-31" }
-
-  const availableSubscriptions = [
-    { id: 2, name: "Basic Plan", price: "$9.99/month" },
-    { id: 3, name: "Gold Plan", price: "$19.99/month" },
-  ]
-
   const handleTabChange = (tab: string) => {
     setActiveTab(tab)
     setSidebarOpen(false)
@@ -113,7 +106,7 @@ export function UserDashboardMain({ email }: UserComponentProps) {
             <BooksTab lentBooks={lentBooks} boughtBooks={boughtBooks} />
           </TabsContent>
           <TabsContent value="subscriptions">
-            <SubscriptionsTab activeSubscription={activeSubscription} availableSubscriptions={availableSubscriptions} />
+            <SubscriptionsTab />
           </TabsContent>
         </Tabs>
       </div>

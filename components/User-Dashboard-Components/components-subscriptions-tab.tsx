@@ -23,7 +23,7 @@ interface SubscriptionsTabProps {
   availableSubscriptions: Subscription[];
 }
 
-export function SubscriptionsTab({ activeSubscription, availableSubscriptions }: SubscriptionsTabProps) {
+export function SubscriptionsTab() {
   const { user } = useUser();
   if (!user) {
     return <p>Loading user details...</p>;
