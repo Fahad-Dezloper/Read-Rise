@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import prisma from "@/lib/prisma";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import GoogleProvider from 'next-auth/providers/google'
 import { v4 as uuidv4 } from 'uuid';
 import { JWT } from "next-auth/jwt";
