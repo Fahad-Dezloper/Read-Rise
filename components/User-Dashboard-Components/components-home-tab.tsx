@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import Image from "next/image"
@@ -5,18 +7,24 @@ import { CalendarIcon } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import {useUser} from "@/app/UserContext"
 import placeholder from '@/assets/placeholder.png'
 
-interface HomeTabProps {
-  lentBooks?: Array<{
-    id: number;
-    name: string;
-    image: string;
-    returnDate: string;
-  }>;
-  onTabChange: (tab: string) => void;
+// interface HomeTabProps {
+//   lentBooks?: Array<{
+//     id: number;
+//     name: string;
+//     image: string;
+//     returnDate: string;
+//   }>;
+//   onTabChange: (tab: string) => void;
+// }
+
+interface Subscription {
+  planType: string; // or the appropriate type
+  endDate: string; // or Date, depending on your usage
+  status: string; // or the appropriate type
 }
 
 interface User{
@@ -24,21 +32,32 @@ interface User{
     email: string;
     memberID?: string;
     avatar?: string;
-    subscription: {
-      planType: string;
-      status: string;
-      startDate: Date;
-      endDate: Date;
-    };
+  subscription: Subscription | null;
+  lendBooks: LendBook;
+};
+  
+  interface LendBook {
+  map: any
+  id: number;
+  bookName: string;
+  bookIsbn: string;
+  lendDate: string; // date when the book was lent
+  lendEndDate: string; // return date
+  book: {
+    Images: Array<{
+      url: string; // URL of the book image
+    }>
   };
+  bookAuthor: string; // author of the lent book
+}
 
-export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
-  const { user }: User = useUser();
+export function HomeTab() {
+  const { user } = useUser() as { user: User | null };
   if (!user) {
     return <p>Loading user details...</p>;
   }
 
-    function formatLendDate(dateString) {
+    function formatLendDate(dateString: string | number | Date) {
     const date = new Date(dateString);
     const day = date.getDate();
     const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
@@ -63,7 +82,9 @@ export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
         <div className="flex items-center space-x-4 mb-6">
           <Avatar className="h-20 w-20">
             <AvatarImage src={user?.avatar || '/placeholder.svg?height=100&width=100'} alt={user?.name || 'User'} />
-            <AvatarFallback>{user?.name ? user.name.split(' ').map(n => n[0]).join('') : 'U'}</AvatarFallback>
+            <AvatarFallback>
+              {user?.name ? user.name.split(' ').map((n: string) => n[0]).join('') : 'U'}
+            </AvatarFallback>
           </Avatar>
           <div>
             <h2 className="text-2xl font-semibold">{user?.name || 'User'}</h2>
@@ -79,7 +100,9 @@ export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
               <CardContent className="flex justify-between items-center p-4">
                 <div>
                   <p className="font-semibold">{user.subscription?.planType}</p>
-                  <p className="text-sm text-gray-500">Valid until: {new Date(user.subscription?.endDate).toLocaleDateString()}</p>
+                  <p className="text-sm text-gray-500">
+                    Valid until: {user.subscription?.endDate ? new Date(user.subscription.endDate).toLocaleDateString() : 'N/A'}
+                  </p>
                 </div>
                 <Badge variant="secondary">{user.subscription?.status}</Badge>
               </CardContent>
@@ -89,7 +112,7 @@ export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
           <div>
             <h3 className="text-lg font-semibold mb-2">Books Lend</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {user.lendBooks.map((lendBook) => (
+              {user.lendBooks.map((lendBook: LendBook) => (
                  <Card key={lendBook.id}>
                   <CardContent className="flex items-center space-x-4 p-4">
                     <Image
@@ -110,11 +133,11 @@ export function HomeTab({ lentBooks, onTabChange }: HomeTabProps) {
                 </Card>
               ))}
             </div>
-            {(lentBooks || []).length > 3 && (
+            {/* {(lendBooks || []).length > 3 && (
               <Button variant="link" className="mt-2" onClick={() => onTabChange("books")}>
                 View all lent books
               </Button>
-            )}
+            )} */}
           </div>
         </div>
       </CardContent>

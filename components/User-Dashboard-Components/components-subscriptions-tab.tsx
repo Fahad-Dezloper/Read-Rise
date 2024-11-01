@@ -7,15 +7,15 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useUser } from "@/app/UserContext"
-import { Subscription } from "@prisma/client"
 
-interface user {
-  subscription: {
+interface Subscription{
     planType: string;
     status: string;
     startDate: Date;
     endDate: Date;
-  }
+}
+interface user {
+  subscription: Subscription | null;
 }
 
 interface SubscriptionsTabProps {
@@ -23,11 +23,13 @@ interface SubscriptionsTabProps {
   availableSubscriptions: Subscription[];
 }
 
+
 export function SubscriptionsTab() {
-  const { user } = useUser();
+  const { user }= useUser() as { user: User | null };
   if (!user) {
     return <p>Loading user details...</p>;
   }
+  const availableSubscriptions = [{id: 1, name: "bronze", price: "$555"}, {id: 2, name: "platinium", price: "$650"}]
 
   return (
     <Card>
