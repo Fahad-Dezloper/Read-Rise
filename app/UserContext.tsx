@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // UserContext.tsx
 "use client"
-import { LendBook, PurchasedBook } from '@prisma/client';
 import React, { createContext, useContext, useState } from 'react';
 
 interface User {
