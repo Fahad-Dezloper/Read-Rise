@@ -24,6 +24,21 @@ interface Book {
   amount: number;
 }
 
+type SaleBooks = {
+  purchasedBooks: Book[]; // This array contains Book objects
+};
+
+type lendBooks = {
+  lendBooks: Book[]; // This array contains Book objects
+};
+
+type User = {
+  memberID: string;
+  lendBooks: Book[]; // Define your Book type as necessary
+  purchasedBooks: Book[];
+  // other properties of User if necessary
+};
+
 
 // Lend
 // fetch user lend books
@@ -171,8 +186,8 @@ export function ReturnBookTabComponent() {
   const [isLendReturnDialogOpen, setIsLendReturnDialogOpen] = useState(false)
   const [isSaleReturnDialogOpen, setIsSaleReturnDialogOpen] = useState(false)
   const [memberId, setMemberId] = useState("")
-  const [lendBooks, setlendBooks] = useState(null)
-  const [saleBooks, setSaleBooks] = useState(null)
+  const [lendBooks, setlendBooks] = useState<lendBooks | null>(null)
+  const [saleBooks, setSaleBooks] = useState<SaleBooks | null>(null)
   const [ user, setUser ] = useState(null);
 
   // fetch all the user who have lended books
@@ -252,8 +267,7 @@ export function ReturnBookTabComponent() {
   // filtering function
 const filteredLendBooks = () => {
   if (!user) return [];
-  // @ts-ignore
-  const books = user.flatMap(u => 
+  const books = (user as User[]).flatMap(u => 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     u.lendBooks.map((book: any) => ({
       ...book,
@@ -320,7 +334,6 @@ const filteredLendBooks = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {/* // @ts-ignore */}
                           {lendBooks.lendBooks?.map((book: Book) => (
                             <TableRow key={book.bookId}>
                               <TableCell>{book.bookName}</TableCell>
@@ -370,7 +383,6 @@ const filteredLendBooks = () => {
                         </TableHeader>
                         {/* onClick={() => handleReturn()} */}
                         <TableBody>
-                          {/* // @ts-ignore */}
                           {saleBooks.purchasedBooks.map((book: Book) => (
                             <TableRow key={book.id}>
                               <TableCell>{book.bookName}</TableCell>
