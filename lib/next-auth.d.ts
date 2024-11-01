@@ -1,13 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import NextAuth from 'next-auth';
+// next-auth.d.ts
+import NextAuth from "next-auth";
 
-declare module 'next-auth' {
-    interface Session {
+declare module "next-auth" {
+  interface Session {
     user: {
-      role?: string; // Add other custom fields as needed
-    };
+      email?: string;
+      role?: string;
+    } & DefaultSession["user"];
   }
+
   interface User {
+    email?: string;
     role?: string;
   }
 }
