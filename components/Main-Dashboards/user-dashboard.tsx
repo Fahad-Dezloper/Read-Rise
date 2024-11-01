@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { useEffect, useState } from "react"
@@ -10,26 +11,14 @@ import { ProfileTab } from "@/components/User-Dashboard-Components/components-pr
 import { BooksTab } from "@/components/User-Dashboard-Components/components-books-tab"
 import { SubscriptionsTab } from "@/components/User-Dashboard-Components/components-subscriptions-tab"
 import axios from "axios"
+import { User, Subscription } from '@/lib/typess';
 import { useUser } from '@/app/UserContext';
 
-interface User {
-  id: string;
-  name: string;
-    email: string;
-  role: string;
-  subscription?: Subscription;
-}
 
 interface UserComponentProps {
   email: string;
 }
 
-interface Subscription {
-  planType: string;
-  status: string;
-  startDate: Date;
-  endDate: Date;
-}
 
 export function UserDashboardMain({ email }: UserComponentProps) {
   const [activeTab, setActiveTab] = useState("home")

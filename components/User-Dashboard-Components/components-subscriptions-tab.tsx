@@ -15,7 +15,7 @@ interface Subscription{
     endDate: Date;
 }
 interface User {
-  subscription: Subscription | null;
+  subscription?: Subscription | null;
 }
 
 interface SubscriptionsTabProps {

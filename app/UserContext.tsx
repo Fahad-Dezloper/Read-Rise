@@ -2,26 +2,7 @@
 // UserContext.tsx
 "use client"
 import React, { createContext, useContext, useState } from 'react';
-
-interface User {
-  purchasedBooks?: any;
-  lendBooks?: any;
-  name: string;
-  email: string;
-  memberID?: string;
-  phoneNumber?: string;
-  avatar?: string;
-  subscription?: string;
-}
-
-interface Subscription {
-  id: string;
-  userId: string;
-  planType: string;
-  status: string;
-  startDate: string;
-  endDate: string;
-}
+import { User, Subscription } from '@/lib/typess'
 
 // context
 const UserContext = createContext<{
