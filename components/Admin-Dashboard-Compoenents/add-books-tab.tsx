@@ -10,6 +10,11 @@ import Image from "next/image"
 import React from "react"
 import { Loader2Icon, X } from 'lucide-react'
 import placeholder from '@/assets/placeholder.png'
+
+type ImageType = {
+  id: string | number;  // or the appropriate type for 'id'
+  url?: string;
+};
 export function AddBooksTabComponent() {
   const CLOUDINARY_CLOUD_NAME="dmatteqxe"
   const UPLOAD_PRESET = "R2_book_image"
@@ -21,7 +26,7 @@ export function AddBooksTabComponent() {
   const [bookQuantity, setQuantity] = useState("")
   const [bookPrice, setBookPrice] = useState("")
   const [images, setImages] = useState<File[]>([])
-  const [prevImages, setPrevImages] = useState([])
+  const [prevImages, setPrevImages] = useState<ImageType[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [bookExists, setBookExists] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null)
