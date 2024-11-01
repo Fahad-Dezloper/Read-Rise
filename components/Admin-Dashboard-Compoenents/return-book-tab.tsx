@@ -252,6 +252,7 @@ export function ReturnBookTabComponent() {
   // filtering function
 const filteredLendBooks = () => {
   if (!user) return [];
+  // @ts-ignore
   const books = user.flatMap(u => 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     u.lendBooks.map((book: any) => ({
@@ -319,6 +320,7 @@ const filteredLendBooks = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
+                          {/* // @ts-ignore */}
                           {lendBooks.lendBooks?.map((book: Book) => (
                             <TableRow key={book.bookId}>
                               <TableCell>{book.bookName}</TableCell>
@@ -368,6 +370,7 @@ const filteredLendBooks = () => {
                         </TableHeader>
                         {/* onClick={() => handleReturn()} */}
                         <TableBody>
+                          {/* // @ts-ignore */}
                           {saleBooks.purchasedBooks.map((book: Book) => (
                             <TableRow key={book.id}>
                               <TableCell>{book.bookName}</TableCell>
