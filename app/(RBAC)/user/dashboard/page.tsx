@@ -1,6 +1,6 @@
 import { UserDashboardMain } from '@/components/Main-Dashboards/user-dashboard';
 import React from 'react'
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 
 const page = async () => {

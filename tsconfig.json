@@ -5,6 +5,7 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    "types": ["next", "next-auth"],
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
