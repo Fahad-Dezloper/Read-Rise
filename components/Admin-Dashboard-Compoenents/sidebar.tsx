@@ -3,7 +3,7 @@
 import { Users, BookOpen, DollarSign, Plus, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export function SidebarComponent({ className = "", setActiveTab }) {
+export function SidebarComponent({ className = "", setActiveTab }: { className?: string; setActiveTab: (tab: string) => void }) {
   return (
     <div className={`bg-white shadow-md ${className}`}>
       <div className="p-4">
