@@ -11,9 +11,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import axios from 'axios';
 import * as XLSX from 'xlsx'; // Import the xlsx library
 
+interface User {
+  memberID: string; // Assuming memberID is a string, adjust if it's a number
+}
+
+interface PurchasedBook {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filter: any
+  id: string; // Assuming each book has a unique identifier
+  bookIsbn: string; // ISBN of the book
+  user: User; // User details
+  purchaseMethod: string; // Payment method used for the purchase
+  purchaseDate: string | Date; // Purchase date, either string or Date type
+}
+
 export function SoldBooksTabComponent() {
-  const [selectedSoldBook, setSelectedSoldBook] = useState(null)
-  const [purchasedBooks, setPurchasedBooks] = useState(null)
+  const [selectedSoldBook, setSelectedSoldBook] = useState<PurchasedBook | null>(null)
+  const [purchasedBooks, setPurchasedBooks] = useState<PurchasedBook | null>(null)
   const [paymentMethod, setPaymentMethod] = useState("all")
   const [dateFilter, setDateFilter] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
@@ -31,7 +45,7 @@ export function SoldBooksTabComponent() {
     fetchUsers();
   }, [setPurchasedBooks]);
 
-  function formatLendDate(dateString) {
+  function formatLendDate(dateString: string | number | Date) {
     const date = new Date(dateString);
     const day = date.getDate();
     const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
@@ -44,7 +58,7 @@ export function SoldBooksTabComponent() {
 }
 
     // filters
-  const filteredBooks = (purchasedBooks || []).filter(book => {
+  const filteredBooks = purchasedBooks && purchasedBooks.filter((book: PurchasedBook) => {
     const matchesPaymentMethod = paymentMethod === "all" || book.purchaseMethod.toLowerCase() === paymentMethod.toLowerCase();
     const matchesDate = !dateFilter || new Date(book.purchaseDate).toISOString().split("T")[0] === dateFilter;
     const matchesSearchTerm = 
@@ -58,7 +72,7 @@ export function SoldBooksTabComponent() {
 // Function to download filtered books as Excel
   const downloadExcel = () => {
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(filteredBooks.map(book => ({
+    const ws = XLSX.utils.json_to_sheet(filteredBooks.map((book:PurchasedBook) => ({
       ISBN: book.bookIsbn,
       MemberID: book.user.memberID,
       PaymentMethod: book.purchaseMethod,
@@ -116,7 +130,7 @@ export function SoldBooksTabComponent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredBooks?.map((book) => (
+              {filteredBooks?.map((book: PurchasedBook) => (
                 <TableRow key={book.id}>
                   <TableCell className="md:table-cell hidden">{book.bookIsbn}</TableCell>
                   <TableCell>{book.user.memberID}</TableCell>
