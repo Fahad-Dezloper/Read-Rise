@@ -5,6 +5,7 @@ export default withAuth({
     authorized: async ({ req, token }) => {
       if (req.nextUrl.pathname.startsWith("/admin/dashboard")) return token?.role === "admin";
       return !!token;
+      // get it done
     },
   },
 });
