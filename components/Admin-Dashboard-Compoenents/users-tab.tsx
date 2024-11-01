@@ -11,14 +11,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useAdmin } from '@/app/AdminContext';
-import { AdminUser } from '@/shared/usertypes';
 import axios from "axios"
 
+interface plantype{
+  planType: string;
+}
+
+interface user{
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  memberID: string;
+  subscription: plantype;
+  plan: string;
+  booksLent?: number;
+}
 export function UsersTabComponent() {
   const [searchQuery, setSearchQuery] = useState("")
   const [userFilter, setUserFilter] = useState("all")
   const [planFilter, setPlanFilter] = useState("all")
-  const [selectedUser, setSelectedUser] = useState(null)
+  const [selectedUser, setSelectedUser] = useState<user | null>(null)
 
    const { adminUser, setAdminUser } = useAdmin();
 
@@ -35,7 +48,7 @@ export function UsersTabComponent() {
     fetchUsers();
   }, [setAdminUser]);
 
-const filteredUsers = (adminUser || []).filter((user) => {
+const filteredUsers = adminUser && adminUser.filter((user: user) => {
   const matchesSearch = 
     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -43,7 +56,7 @@ const filteredUsers = (adminUser || []).filter((user) => {
     user.memberID.toLowerCase().includes(searchQuery.toLowerCase());
   const matchesUserFilter = userFilter === "all" || 
                             (userFilter === "expiry" && user.plan !== "Basic") ||
-                            (userFilter === "lent" && user.booksLent > 0);
+                            (userFilter === "lent" && user.booksLent !== undefined && user.booksLent > 0);
   const matchesPlanFilter = planFilter === "all" || user.subscription.planType.toLowerCase() === planFilter.toLowerCase();
 
   return matchesSearch && matchesUserFilter && matchesPlanFilter;
@@ -122,7 +135,7 @@ const filteredUsers = (adminUser || []).filter((user) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.map((user: AdminUser) => (
+              {filteredUsers.map((user: user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell className="md:table-cell hidden">{user.email}</TableCell>
@@ -164,7 +177,8 @@ const filteredUsers = (adminUser || []).filter((user) => {
                             </div>
                             <p><strong>Books Lent:</strong> {selectedUser.booksLent ? selectedUser.booksLent : "No Books Lent yet"}</p>
                             <div className="flex justify-between">
-                              <Button onClick={() => handleUpdateUser(selectedUser.id, selectedUser.plan)}>
+                              <Button>
+                                {/* onClick={() => handleUpdateUser(selectedUser.id, selectedUser.plan)} */}
                                 Save Details
                               </Button>
                               <AlertDialog>
@@ -182,7 +196,8 @@ const filteredUsers = (adminUser || []).filter((user) => {
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDeleteUser(selectedUser.id)}>
+                                    <AlertDialogAction>
+                                      {/* onClick={() => handleDeleteUser(selectedUser.id)} */}
                                       Delete
                                     </AlertDialogAction>
                                   </AlertDialogFooter>

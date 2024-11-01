@@ -8,6 +8,7 @@ export interface User {
 
 // types.ts
 export interface AdminUser {
+  filter: any;
   id: string;
   name: string;
   email: string;
