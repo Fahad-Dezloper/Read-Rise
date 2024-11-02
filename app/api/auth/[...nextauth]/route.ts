@@ -1,17 +1,6 @@
-// app/api/auth/[...nextauth]/route.ts
-import NextAuth from 'next-auth';
+import NextAuth from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions'; 
-import { NextRequest } from 'next/server';
-import { NextApiRequest, NextApiResponse } from 'next';
 
-// Combine types for compatibility
-type CombinedRequest = NextRequest & NextApiRequest;
-type CombinedResponse = NextApiResponse;
+const handler = NextAuth(authOptions);
 
-// Create the handler function
-const handler = async (req: CombinedRequest, res: CombinedResponse) => {
-    return await NextAuth(req, res, authOptions);
-};
-
-// Exporting GET and POST handlers
 export { handler as GET, handler as POST };
