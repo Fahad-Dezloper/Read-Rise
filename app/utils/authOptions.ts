@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
         if (user) {
             console.log("User:", user);
-            token = { ...token, ...user }; // Merge user data into token
+            token = { ...token, ...user };
         }
         return token;
     },
@@ -55,7 +55,4 @@ export const authOptions: NextAuthOptions = {
         return session;
     }
 }
-
-
-
 }
