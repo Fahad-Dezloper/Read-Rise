@@ -14,7 +14,7 @@ export async function GET() {
               }
           }
       });
-      console.log(purchasedBooks);
+      console.log("here purchased books", purchasedBooks);
     return NextResponse.json(purchasedBooks);
   } catch (error) {
     console.error('Error fetching purchasedBooks:', error);
