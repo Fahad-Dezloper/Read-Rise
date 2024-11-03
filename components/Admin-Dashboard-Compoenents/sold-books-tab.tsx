@@ -18,11 +18,11 @@ interface User {
 interface PurchasedBook {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filter: any
-  id: string; // Assuming each book has a unique identifier
-  bookIsbn: string; // ISBN of the book
-  user: User; // User details
-  purchaseMethod: string; // Payment method used for the purchase
-  purchaseDate: string | Date; // Purchase date, either string or Date type
+  id: string;
+  bookIsbn: string; 
+  user: User; 
+  purchaseMethod: string; 
+  purchaseDate: string | Date; 
 }
 
 export function SoldBooksTabComponent() {
@@ -31,10 +31,12 @@ export function SoldBooksTabComponent() {
   const [paymentMethod, setPaymentMethod] = useState("all")
   const [dateFilter, setDateFilter] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
+  const [loading, setLoading] = useState(false);
 
    useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setLoading(true);
         const response = await axios.get('/queries/allPurchasedBooks'); 
         console.log(response);
         setPurchasedBooks(response.data);
@@ -42,6 +44,7 @@ export function SoldBooksTabComponent() {
         console.error('Error fetching users:', error);
       }
     };
+     setLoading(false);
     fetchUsers();
   }, [setPurchasedBooks]);
 
@@ -118,6 +121,7 @@ export function SoldBooksTabComponent() {
             Download Excel
           </Button>
         </div>
+        {loading ? <div className="text-xl font-black">Loading</div> : (
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -163,6 +167,7 @@ export function SoldBooksTabComponent() {
             </TableBody>
           </Table>
         </div>
+              )}
       </CardContent>
     </Card>
   )
