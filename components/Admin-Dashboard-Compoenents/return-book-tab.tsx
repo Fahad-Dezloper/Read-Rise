@@ -211,6 +211,13 @@ export function ReturnBookTabComponent() {
     }, []);
 
 
+  useEffect(() => {
+    if (memberId) {
+      handleLendReturn(); 
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberId]);
+  
     // Lend
   // fetch unique user lended books
   const handleLendReturn = async () => {
@@ -220,12 +227,19 @@ export function ReturnBookTabComponent() {
     // alert(`Book returned successfully!`)
   }
 
+
   // update return book on user and lend books model
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleLendReturnButton = async (ISBN: number, userId: any, bookId: any) => {
+    try {
+      const bookUpdate = await UpdateBook(ISBN);
+      const userUpdate = await handleReturnBook(bookId, userId)
+      
+      setlendBooks(null);
+    } catch (err) {
+      console.log(err)
+    }
     // console.log(ISBN, userId, bookId)
-    const bookUpdate = await UpdateBook(ISBN);
-    const userUpdate = await handleReturnBook(bookId, userId)
     // console.log("book updated successfully");
     // alert("book updated successfully")
   }
@@ -319,7 +333,6 @@ const filteredLendBooks = () => {
                     value={memberId}
                     onChange={(e) => setMemberId(e.target.value)}
                   />
-                  <Button onClick={() => handleLendReturn()}>Fetch</Button>
                   {lendBooks ? (
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Lend Books</h3>
@@ -329,7 +342,8 @@ const filteredLendBooks = () => {
                             <TableHead>Book Name</TableHead>
                             <TableHead>ISBN</TableHead>
                             <TableHead>Due Date</TableHead>
-                            <TableHead>Late Fee</TableHead>
+                            <TableHead>Lend Date</TableHead>
+                            <TableHead>Late Fees</TableHead>
                             <TableHead>Action</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -338,8 +352,9 @@ const filteredLendBooks = () => {
                             <TableRow key={book.bookId}>
                               <TableCell>{book.bookName}</TableCell>
                               <TableCell>{book.bookIsbn}</TableCell>
-                              <TableCell>{book.lendEndDate}</TableCell>
-                              <TableCell>{book.lendDate}</TableCell>
+                              <TableCell>{formatLendDate(book.lendEndDate)}</TableCell>
+                              <TableCell>{formatLendDate(book.lendDate)}</TableCell>
+                              <TableCell>$5</TableCell>
                               <TableCell>
                                 <Button size="sm" onClick={() => handleLendReturnButton(book.bookIsbn, book.userId, book.id)}>Return</Button>
                               </TableCell>
