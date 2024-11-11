@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
                     email: profile.email,
                     image: profile.picture,
                     memberID,
-                    role: profile.email == "fahad.khan2216@gmail.com" ? "admin" : "user",
+                    role: profile.email == "fahad.khan2216@gmail.com" || "mirzasayeedbaig13@gmail.com" || "" ? "admin" : "user",
                     subscription: {
                         create: {
                         planType: 'BASIC',
